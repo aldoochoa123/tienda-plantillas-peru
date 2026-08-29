@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔐 Admin - Panel de Accesos</title>
+<link rel="icon" type="image/jpeg" href="logo.jpg">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #f9fafb; color: #1f2937; min-height: 100vh; }
+  
+  .admin-header {
+    background: linear-gradient(135deg, #1e0880, #4318FF);
+    color: white; padding: 24px 20px; text-align: center;
+  }
+  .admin-header h1 { font-size: 1.5rem; font-weight: 800; }
+  .admin-header p { font-size: 0.85rem; opacity: 0.8; margin-top: 4px; }
+  
+  .container { max-width: 700px; margin: 0 auto; padding: 20px; }
+  
+  .card {
+    background: white; border-radius: 12px; padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 16px;
+  }
+  .card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+  
+  .form-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .form-row input {
+    flex: 1; padding: 12px 14px; border: 2px solid #e5e7eb;
+    border-radius: 8px; font-size: 0.95rem; font-family: inherit; outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-row input:focus { border-color: #4318FF; }
+  .form-row button {
+    padding: 12px 20px; border: none; border-radius: 8px;
+    background: #4318FF; color: white; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; white-space: nowrap; transition: background 0.2s;
+  }
+  .form-row button:hover { background: #3510d8; }
+  
+  .stats {
+    display: flex; gap: 12px; margin-bottom: 16px;
+  }
+  .stat-box {
+    flex: 1; text-align: center; padding: 16px; border-radius: 10px;
+    background: #f5f0ff; border: 1px solid #ede5ff;
+  }
+  .stat-num { font-size: 1.8rem; font-weight: 800; color: #4318FF; }
+  .stat-label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .client-list { list-style: none; }
+  .client-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid #f3f4f6;
+  }
+  .client-item:last-child { border-bottom: none; }
+  .client-name { font-weight: 600; font-size: 0.95rem; }
+  .client-pass { 
+    font-family: monospace; font-size: 0.85rem; background: #f3f4f6;
+    padding: 4px 10px; border-radius: 6px; color: #374151; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .client-pass:hover { background: #e5e7eb; }
+  .client-actions { display: flex; gap: 6px; align-items: center; }
+  .btn-sm {
+    padding: 6px 12px; border: none; border-radius: 6px;
+    font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-copy { background: #dbeafe; color: #1d4ed8; }
+  .btn-copy:hover { background: #bfdbfe; }
+  .btn-wa { background: #ede5ff; color: #3510d8; }
+  .btn-wa:hover { background: #d4c4ff; }
+  .btn-delete { background: #fee2e2; color: #dc2626; }
+  .btn-delete:hover { background: #fecaca; }
+  
+  .empty { text-align: center; padding: 40px 20px; color: #9ca3af; }
+  .empty .emoji { font-size: 2.5rem; margin-bottom: 8px; }
+  
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: #1f2937; color: white; padding: 12px 24px; border-radius: 10px;
+    font-size: 0.9rem; font-weight: 600; opacity: 0; transition: opacity 0.3s;
+    z-index: 1000; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+  
+  .password-msg {
+    background: #fef3c7; border: 1px solid #fbbf24; border-radius: 10px;
+    padding: 16px; margin-bottom: 16px; font-size: 0.85rem; color: #92400e;
+  }
+  .password-msg strong { color: #78350f; }
+</style>
+</head>
+<body>
+
+<div class="admin-header">    <h1><img src="logo.jpg" alt="Logo" style="width: 36px; height: 36px; object-fit: contain; vertical-align: middle; margin-right: 8px; border-radius: 6px;">Panel de Administración</h1>
+  <p>Gestiona los accesos de tus clientes</p>
+</div>
+
+<div class="container">
+  <div class="card">
+    <h2>📊 Resumen</h2>
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-num" id="totalClients">0</div>
+        <div class="stat-label">Clientes</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="totalActive">0</div>
+        <div class="stat-label">Activos</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h2>➕ Agregar Cliente</h2>
+    <div class="form-row">
+      <input type="text" id="clientPhone" placeholder="Número WhatsApp (ej: 999888777)">
+      <input type="text" id="clientName" placeholder="Nombre (opcional)">
+      <button onclick="addClient()">Agregar</button>
+    </div>
+    <div class="password-msg">
+      💡 <strong>Usuario:</strong> El número de WhatsApp del cliente<br>
+      💡 <strong>Contraseña:</strong> Se genera automáticamente (últimos 6 dígitos con prefijo PE)<br>
+      Ejemplo: 999888777 → usuario <strong>999888777</strong> contraseña <strong>PE888777</strong>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h2>👥 Clientes Activos</h2>
+    <ul class="client-list" id="clientList">
+      <li class="empty">
+        <div class="emoji">📭</div>
+        <p>No hay clientes aún. Agrega uno arriba.</p>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="card" style="background: #f5f0ff; border: 1px solid #ede5ff;">
+    <h2>📋 Cómo usar</h2>
+    <ol style="font-size: 0.9rem; line-height: 1.8; padding-left: 20px; color: #374151;">
+      <li>Cliente te escribe por <strong>WhatsApp</strong></li>
+      <li>Tú vendes el pack</li>
+      <li>Haz clic en <strong>"Agregar"</strong> con su nombre</li>
+      <li>Haz clic en <strong>"WhatsApp"</strong> para enviarle sus datos</li>
+      <li>El cliente entra a tu web → escribe <strong>usuario</strong> y <strong>contraseña</strong></li>
+      <li>¡Listo! Puede descargar lo que quiera, cuantas veces quiera</li>
+    </ol>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Almacenamiento en localStorage ──
+  function getClients() {
+    return JSON.parse(localStorage.getItem('clients') || '[]');
+  }
+  
+  function saveClients(clients) {
+    localStorage.setItem('clients', JSON.stringify(clients));
+    renderClients();
+  }
+  
+  function generatePassword(phone) {
+    const clean = phone.replace(/[^0-9]/g, '').slice(-6);
+    return 'PE' + clean;
+  }
+  
+  function addClient() {
+    const phoneInput = document.getElementById('clientPhone');
+    const nameInput = document.getElementById('clientName');
+    const phone = phoneInput.value.trim().replace(/[^0-9]/g, '');
+    const name = nameInput.value.trim() || phone;
+    
+    if (!phone || phone.length < 6) {
+      phoneInput.focus();
+      showToast('⚠️ Ingresa un número válido');
+      return;
+    }
+    
+    const clients = getClients();
+    const password = generatePassword(phone);
+    
+    // Verificar que no exista
+    if (clients.find(c => c.phone === phone)) {
+      showToast('⚠️ Ya existe un cliente con ese número');
+      return;
+    }
+    
+    clients.push({
+      name: name,
+      phone: phone,
+      password: password,
+      created: new Date().toLocaleDateString('es-PE'),
+      active: true
+    });
+    
+    saveClients(clients);
+    phoneInput.value = '';
+    nameInput.value = '';
+    phoneInput.focus();
+    showToast('✅ Cliente "' + name + '" agregado');
+  }
+  
+  function deleteClient(index) {
+    const clients = getClients();
+    const client = clients[index];
+    if (!confirm('¿Eliminar acceso de "' + client.name + '"?')) return;
+    clients.splice(index, 1);
+    saveClients(clients);
+    showToast('🗑️ Cliente eliminado');
+  }
+  
+  function copyPassword(password) {
+    navigator.clipboard.writeText(password).then(() => {
+      showToast('📋 Contraseña copiada: ' + password);
+    });
+  }
+  
+  function sendWhatsApp(name, phone, password) {
+    const msg = encodeURIComponent(
+      'Hola ' + name + ' 👋\n\n' +
+      'Ya tienes acceso a las Plantillas Excel Perú 📦\n\n' +
+      '👤 Usuario: *' + phone + '*\n' +
+      '🔐 Contraseña: *' + password + '*\n\n' +
+      'Ingresa a: [tu URL aquí]\n\n' +
+      'Si tienes dudas, escríbeme 😊'
+    );
+    window.open('https://wa.me/?text=' + msg, '_blank');
+    showToast('📱 Mensaje abierto para enviar por WhatsApp');
+  }
+  
+  function renderClients() {
+    const clients = getClients();
+    const list = document.getElementById('clientList');
+    document.getElementById('totalClients').textContent = clients.length;
+    document.getElementById('totalActive').textContent = clients.filter(c => c.active).length;
+    
+    if (clients.length === 0) {
+      list.innerHTML = '<li class="empty"><div class="emoji">📭</div><p>No hay clientes aún. Agrega uno arriba.</p></li>';
+      return;
+    }
+    
+    list.innerHTML = clients.map((c, i) => `
+      <li class="client-item">
+        <div>
+          <div class="client-name">${c.name}</div>
+          <div style="font-size: 0.8rem; color: #6b7280;">📱 ${c.phone}</div>
+          <span class="client-pass" onclick="copyPassword('${c.password}')" title="Clic para copiar">🔑 ${c.password}</span>
+        </div>
+        <div class="client-actions">
+          <button class="btn-sm btn-copy" onclick="copyPassword('${c.password}')">📋 Copiar</button>
+          <button class="btn-sm btn-wa" onclick="sendWhatsApp('${c.name.replace(/'/g, "\\'")}', '${c.phone}', '${c.password}')">💬 WhatsApp</button>
+          <button class="btn-sm btn-delete" onclick="deleteClient(${i})">🗑️</button>
+        </div>
+      </li>
+    `).join('');
+  }
+  
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+  
+  // Enter para agregar
+  document.getElementById('clientName').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addClient();
+  });
+  
+  // Render inicial
+  renderClients();
+</script>
+</body>
+</html>

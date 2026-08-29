@@ -1,0 +1,11 @@
+{
+  "name": "tienda-plantillas-peru",
+  "version": "1.0.0",
+  "description": "Tienda de plantillas Excel profesionales para negocios en Perú - 3,434 plantillas con IGV, AFP, RUC y normativa peruana",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve . -l 3000"
+  },
+  "keywords": ["plantillas", "excel", "peru", "contabilidad", "negocios"],
+  "license": "MIT"
+}
