@@ -152,15 +152,13 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
 <script>
   // ── Supabase ──
+  var allClients = [];
   const SUPABASE_URL = 'https://emwmyfhjdjykxnfsdyny.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtd215ZmhqZGp5a254ZnNkbnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzc5NTgsImV4cCI6MjEwMzYxMzk1OH0.gn902cjDSjXGLzB7_bR0l519obVEFvUFBRZpRBq81CM';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-  console.log('Supabase conectado:', supabase);
-
-  let allClients = [];
 
   function generatePassword(phone) {
     const clean = phone.replace(/[^0-9]/g, '').slice(-6);
