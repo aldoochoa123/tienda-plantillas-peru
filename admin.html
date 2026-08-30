@@ -152,12 +152,13 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
   // ── Supabase ──
   const SUPABASE_URL = 'https://emwmyfhjdjykxnfsdyny.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtd215ZmhqZGp5a254ZnNkbnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzc5NTgsImV4cCI6MjEwMzYxMzk1OH0.gn902cjDSjXGLzB7_bR0l519obVEFvUFBRZpRBq81CM';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  console.log('Supabase conectado:', supabase);
 
   let allClients = [];
 
@@ -182,40 +183,48 @@
   }
 
   async function addClient() {
-    const phoneInput = document.getElementById('clientPhone');
-    const nameInput = document.getElementById('clientName');
-    const phone = phoneInput.value.trim().replace(/[^0-9]/g, '');
-    const name = nameInput.value.trim() || phone;
+    try {
+      const phoneInput = document.getElementById('clientPhone');
+      const nameInput = document.getElementById('clientName');
+      const phone = phoneInput.value.trim().replace(/[^0-9]/g, '');
+      const name = nameInput.value.trim() || phone;
 
-    if (!phone || phone.length < 6) {
+      if (!phone || phone.length < 6) {
+        phoneInput.focus();
+        showToast('⚠️ Ingresa un número válido');
+        return;
+      }
+
+      const password = generatePassword(phone);
+
+      // Verificar que no exista
+      if (allClients.find(c => c.phone === phone)) {
+        showToast('⚠️ Ya existe un cliente con ese número');
+        return;
+      }
+
+      showToast('⏳ Guardando...');
+
+      const { data, error } = await supabase
+        .from('clients')
+        .insert({ phone, name, password, active: true })
+        .select();
+
+      if (error) {
+        showToast('❌ Error: ' + error.message);
+        console.error('Supabase error:', error);
+        return;
+      }
+
+      phoneInput.value = '';
+      nameInput.value = '';
       phoneInput.focus();
-      showToast('⚠️ Ingresa un número válido');
-      return;
+      showToast('✅ Cliente "' + name + '" agregado');
+      await loadClients();
+    } catch (e) {
+      showToast('❌ Error: ' + e.message);
+      console.error('Error general:', e);
     }
-
-    const password = generatePassword(phone);
-
-    // Verificar que no exista
-    if (allClients.find(c => c.phone === phone)) {
-      showToast('⚠️ Ya existe un cliente con ese número');
-      return;
-    }
-
-    const { error } = await supabase
-      .from('clients')
-      .insert({ phone, name, password, active: true });
-
-    if (error) {
-      showToast('❌ Error guardando cliente');
-      console.error(error);
-      return;
-    }
-
-    phoneInput.value = '';
-    nameInput.value = '';
-    phoneInput.focus();
-    showToast('✅ Cliente "' + name + '" agregado');
-    await loadClients();
   }
 
   async function deleteClient(id) {
