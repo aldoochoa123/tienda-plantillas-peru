@@ -537,50 +537,59 @@ function normalizePhone(p) {
 async function checkGate() {
   const userInput = document.getElementById('gateUser');
   const passInput = document.getElementById('gatePassword');
-  const error = document.getElementById('gateError');
+  const errorEl = document.getElementById('gateError');
   const btn = document.querySelector('.gate-btn');
 
   const user = normalizePhone(userInput.value);
   const pass = passInput.value.trim().toUpperCase();
 
   if (!user || !pass) {
-    error.textContent = 'Completa ambos campos.';
-    error.style.display = 'block';
+    errorEl.textContent = 'Completa ambos campos.';
+    errorEl.style.display = 'block';
     return;
   }
 
   btn.textContent = 'Verificando...';
   btn.disabled = true;
 
-  const { data, err } = await supabase
-    .from('clients')
-    .select('*')
-    .eq('phone', user)
-    .eq('password', pass)
-    .eq('active', true)
-    .limit(1);
+  try {
+    const { data, error } = await supabase
+      .from('clients')
+      .select('*')
+      .eq('phone', user)
+      .eq('password', pass)
+      .eq('active', true)
+      .limit(1);
 
-  btn.textContent = 'Entrar';
-  btn.disabled = false;
+    btn.textContent = 'Entrar';
+    btn.disabled = false;
 
-  if (err || !data || data.length === 0) {
-    error.textContent = 'Usuario o contraseña incorrectos.';
-    error.style.display = 'block';
-    passInput.value = '';
-    passInput.focus();
-    userInput.style.borderColor = '#dc2626';
-    passInput.style.borderColor = '#dc2626';
-    setTimeout(() => {
-      userInput.style.borderColor = '';
-      passInput.style.borderColor = '';
-    }, 1500);
+    if (error || !data || data.length === 0) {
+      errorEl.textContent = 'Usuario o contraseña incorrectos.';
+      errorEl.style.display = 'block';
+      passInput.value = '';
+      passInput.focus();
+      userInput.style.borderColor = '#dc2626';
+      passInput.style.borderColor = '#dc2626';
+      setTimeout(() => {
+        userInput.style.borderColor = '';
+        passInput.style.borderColor = '';
+      }, 1500);
     return;
   }
 
   sessionStorage.setItem('gate_ok', '1');
   sessionStorage.setItem('gate_user', data[0].phone);
   document.getElementById('gateOverlay').classList.add('hidden');
-  error.style.display = 'none';
+  errorEl.style.display = 'none';
+
+  } catch (e) {
+    btn.textContent = 'Entrar';
+    btn.disabled = false;
+    errorEl.textContent = 'Error de conexión. Intenta de nuevo.';
+    errorEl.style.display = 'block';
+    console.error('Login error:', e);
+  }
 }
 
 // Enter para verificar
