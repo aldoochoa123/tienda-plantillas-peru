@@ -90,9 +90,48 @@
     padding: 16px; margin-bottom: 16px; font-size: 0.85rem; color: #92400e;
   }
   .password-msg strong { color: #78350f; }
+
+  .admin-gate {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, #1e0880, #4318FF);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2000;
+  }
+  .admin-gate.hidden { display: none; }
+  .admin-gate-box {
+    background: white; border-radius: 20px; padding: 40px; max-width: 380px;
+    width: 90%; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+  }
+  .admin-gate-box img { width: 60px; height: 60px; border-radius: 12px; object-fit: contain; margin-bottom: 16px; }
+  .admin-gate-box h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
+  .admin-gate-box p { font-size: 0.85rem; color: #6b7280; margin-bottom: 20px; }
+  .admin-gate-box input {
+    width: 100%; padding: 14px 18px; border: 2px solid #e5e7eb;
+    border-radius: 10px; font-size: 1rem; text-align: center;
+    font-family: inherit; outline: none; transition: border-color 0.2s;
+  }
+  .admin-gate-box input:focus { border-color: #4318FF; }
+  .admin-gate-box button {
+    width: 100%; padding: 14px; border: none; border-radius: 10px;
+    background: #4318FF; color: white; font-size: 1rem;
+    font-weight: 700; cursor: pointer; margin-top: 12px;
+  }
+  .admin-gate-box button:hover { background: #3510d8; }
+  .admin-gate-error { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; }
 </style>
 </head>
 <body>
+
+<div class="admin-gate" id="adminGate">
+  <div class="admin-gate-box">
+    <img src="logo.jpg" alt="Logo">
+    <h2>Panel de Administración</h2>
+    <p>Ingresa la contraseña para acceder</p>
+    <input type="password" id="adminPass" placeholder="Contraseña" autofocus>
+    <button onclick="checkAdminGate()">Entrar</button>
+    <div class="admin-gate-error" id="adminGateError">Contraseña incorrecta.</div>
+  </div>
+</div>
 
 <div class="admin-header">    <h1><img src="logo.jpg" alt="Logo" style="width: 36px; height: 36px; object-fit: contain; vertical-align: middle; margin-right: 8px; border-radius: 6px;">Panel de Administración</h1>
   <p>Gestiona los accesos de tus clientes</p>
@@ -154,6 +193,31 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
 <script>
+  // ── Admin Gate ──
+  const ADMIN_PASS = '@Politaxi123*';
+
+  function checkAdminGate() {
+    const input = document.getElementById('adminPass');
+    const error = document.getElementById('adminGateError');
+    if (input.value === ADMIN_PASS) {
+      sessionStorage.setItem('admin_ok', '1');
+      document.getElementById('adminGate').classList.add('hidden');
+      error.style.display = 'none';
+    } else {
+      error.style.display = 'block';
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  document.getElementById('adminPass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkAdminGate();
+  });
+
+  if (sessionStorage.getItem('admin_ok') === '1') {
+    document.getElementById('adminGate').classList.add('hidden');
+  }
+
   // ── Supabase ──
   var allClients = [];
   const SUPABASE_URL = 'https://emwmyfhjdjykxnfsdyny.supabase.co';
