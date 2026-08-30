@@ -223,6 +223,8 @@
   const SUPABASE_URL = 'https://emwmyfhjdjyknxfsdnyg.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtd215ZmhqZGp5a254ZnNkbnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzc5NTgsImV4cCI6MjEwMzYxMzk1OH0.gn902cjDSjXGLzB7_bR0l519obVEFvUFBRZpRBq81CM';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  console.log('Supabase URL:', SUPABASE_URL);
+  console.log('Supabase client:', supabase);
 
   function generatePassword(phone) {
     const clean = phone.replace(/[^0-9]/g, '').slice(-6);
@@ -230,18 +232,23 @@
   }
 
   async function loadClients() {
-    const { data, error } = await supabase
-      .from('clients')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('clients')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (error) {
-      showToast('❌ Error cargando clientes');
-      console.error(error);
-      return;
+      if (error) {
+        showToast('❌ Error cargando: ' + error.message);
+        console.error('Load error:', error);
+        return;
+      }
+      allClients = data || [];
+      renderClients();
+    } catch (e) {
+      showToast('❌ Error conexión: ' + e.message);
+      console.error('Load catch:', e);
     }
-    allClients = data || [];
-    renderClients();
   }
 
   async function addClient() {
