@@ -152,98 +152,121 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ── Almacenamiento en localStorage ──
-  function getClients() {
-    return JSON.parse(localStorage.getItem('clients') || '[]');
-  }
-  
-  function saveClients(clients) {
-    localStorage.setItem('clients', JSON.stringify(clients));
-    renderClients();
-  }
-  
+  // ── Supabase ──
+  const SUPABASE_URL = 'https://emwmyfhjdjykxnfsdyny.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtd215ZmhqZGp5a254ZnNkbnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzc5NTgsImV4cCI6MjEwMzYxMzk1OH0.gn902cjDSjXGLzB7_bR0l519obVEFvUFBRZpRBq81CM';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  let allClients = [];
+
   function generatePassword(phone) {
     const clean = phone.replace(/[^0-9]/g, '').slice(-6);
     return 'PE' + clean;
   }
-  
-  function addClient() {
+
+  async function loadClients() {
+    const { data, error } = await supabase
+      .from('clients')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      showToast('❌ Error cargando clientes');
+      console.error(error);
+      return;
+    }
+    allClients = data || [];
+    renderClients();
+  }
+
+  async function addClient() {
     const phoneInput = document.getElementById('clientPhone');
     const nameInput = document.getElementById('clientName');
     const phone = phoneInput.value.trim().replace(/[^0-9]/g, '');
     const name = nameInput.value.trim() || phone;
-    
+
     if (!phone || phone.length < 6) {
       phoneInput.focus();
       showToast('⚠️ Ingresa un número válido');
       return;
     }
-    
-    const clients = getClients();
+
     const password = generatePassword(phone);
-    
+
     // Verificar que no exista
-    if (clients.find(c => c.phone === phone)) {
+    if (allClients.find(c => c.phone === phone)) {
       showToast('⚠️ Ya existe un cliente con ese número');
       return;
     }
-    
-    clients.push({
-      name: name,
-      phone: phone,
-      password: password,
-      created: new Date().toLocaleDateString('es-PE'),
-      active: true
-    });
-    
-    saveClients(clients);
+
+    const { error } = await supabase
+      .from('clients')
+      .insert({ phone, name, password, active: true });
+
+    if (error) {
+      showToast('❌ Error guardando cliente');
+      console.error(error);
+      return;
+    }
+
     phoneInput.value = '';
     nameInput.value = '';
     phoneInput.focus();
     showToast('✅ Cliente "' + name + '" agregado');
+    await loadClients();
   }
-  
-  function deleteClient(index) {
-    const clients = getClients();
-    const client = clients[index];
-    if (!confirm('¿Eliminar acceso de "' + client.name + '"?')) return;
-    clients.splice(index, 1);
-    saveClients(clients);
+
+  async function deleteClient(id) {
+    const client = allClients.find(c => c.id === id);
+    if (!client || !confirm('¿Eliminar acceso de "' + client.name + '"?')) return;
+
+    const { error } = await supabase
+      .from('clients')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      showToast('❌ Error eliminando cliente');
+      console.error(error);
+      return;
+    }
+
     showToast('🗑️ Cliente eliminado');
+    await loadClients();
   }
-  
+
   function copyPassword(password) {
     navigator.clipboard.writeText(password).then(() => {
       showToast('📋 Contraseña copiada: ' + password);
     });
   }
-  
+
   function sendWhatsApp(name, phone, password) {
     const msg = encodeURIComponent(
       'Hola ' + name + ' 👋\n\n' +
       'Ya tienes acceso a las Plantillas Excel Perú 📦\n\n' +
       '👤 Usuario: *' + phone + '*\n' +
       '🔐 Contraseña: *' + password + '*\n\n' +
-      'Ingresa a: [tu URL aquí]\n\n' +
+      'Ingresa a: https://tienda-plantillas-peru.vercel.app\n\n' +
       'Si tienes dudas, escríbeme 😊'
     );
     window.open('https://wa.me/?text=' + msg, '_blank');
     showToast('📱 Mensaje abierto para enviar por WhatsApp');
   }
-  
+
   function renderClients() {
-    const clients = getClients();
     const list = document.getElementById('clientList');
-    document.getElementById('totalClients').textContent = clients.length;
-    document.getElementById('totalActive').textContent = clients.filter(c => c.active).length;
-    
-    if (clients.length === 0) {
+    document.getElementById('totalClients').textContent = allClients.length;
+    document.getElementById('totalActive').textContent = allClients.filter(c => c.active).length;
+
+    if (allClients.length === 0) {
       list.innerHTML = '<li class="empty"><div class="emoji">📭</div><p>No hay clientes aún. Agrega uno arriba.</p></li>';
       return;
     }
-    
-    list.innerHTML = clients.map((c, i) => `
+
+    list.innerHTML = allClients.map(c => `
       <li class="client-item">
         <div>
           <div class="client-name">${c.name}</div>
@@ -253,26 +276,26 @@
         <div class="client-actions">
           <button class="btn-sm btn-copy" onclick="copyPassword('${c.password}')">📋 Copiar</button>
           <button class="btn-sm btn-wa" onclick="sendWhatsApp('${c.name.replace(/'/g, "\\'")}', '${c.phone}', '${c.password}')">💬 WhatsApp</button>
-          <button class="btn-sm btn-delete" onclick="deleteClient(${i})">🗑️</button>
+          <button class="btn-sm btn-delete" onclick="deleteClient(${c.id})">🗑️</button>
         </div>
       </li>
     `).join('');
   }
-  
+
   function showToast(msg) {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
   }
-  
+
   // Enter para agregar
   document.getElementById('clientName').addEventListener('keydown', e => {
     if (e.key === 'Enter') addClient();
   });
-  
-  // Render inicial
-  renderClients();
+
+  // Cargar clientes desde Supabase
+  loadClients();
 </script>
 </body>
 </html>
