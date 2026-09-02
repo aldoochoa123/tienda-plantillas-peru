@@ -52,6 +52,27 @@ npx serve . -l 3000
 
 No hot reload, no transpilation. Edit HTML, refresh browser.
 
+## Custom Skills (`.mimocode/skills/`)
+
+15 business skills created for growth and marketing:
+- `social-media-expert` — Estrategia de redes sociales
+- `web-design-expert` — Diseno y UX del sitio
+- `social-sales-design` — Graficos para vender en redes
+- `digital-marketing-expert` — Marketing digital completo
+- `meta-ads-expert` — Publicidad Facebook + Instagram
+- `facebook-ads-expert` — Solo Facebook (grupos, pagina, ads)
+- `online-sales-expert` — Tecnicas de venta online
+- `ai-automation-expert` — Automatizacion con IA
+- `hotmart-expert` — Vender productos digitales en Hotmart
+- `curso-ventas-expert` — Estrategias para vender cursos online
+- `cursos-online-expert` — Crear y producir cursos online
+- `ia-expert` — Inteligencia artificial aplicada a negocios
+- `whatsapp-business-expert` — WhatsApp Business para ventas
+- `diseno-interiores-expert` — Diseno de interiores y melamina
+- `diseno-web-apple-expert` — Diseno web estilo Apple premium
+
+Invoke with `/skill-name`. All are Peru-market focused.
+
 ## What NOT to do
 
 - Don't introduce a build system or bundler — the site is intentionally static for simple deployment (GitHub Pages, Netlify, etc.).
