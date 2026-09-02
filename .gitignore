@@ -2,3 +2,10 @@ node_modules/
 .DS_Store
 *.log
 .freebuff/
+
+# Scripts y PDFs — solo subir cuando el usuario lo pida explicitamente
+generar_*.py
+*.pdf
+*.jpeg
+*.jpg
+*.png
