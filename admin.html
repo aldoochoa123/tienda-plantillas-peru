@@ -3,248 +3,322 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔐 Admin - Panel de Accesos</title>
+<title>Admin — Aldus Technology</title>
 <link rel="icon" type="image/jpeg" href="logo.jpg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: #f9fafb; color: #1f2937; min-height: 100vh; }
-  
-  .admin-header {
-    background: linear-gradient(135deg, #1e0880, #4318FF);
-    color: white; padding: 24px 20px; text-align: center;
-  }
-  .admin-header h1 { font-size: 1.5rem; font-weight: 800; }
-  .admin-header p { font-size: 0.85rem; opacity: 0.8; margin-top: 4px; }
-  
-  .container { max-width: 700px; margin: 0 auto; padding: 20px; }
-  
-  .card {
-    background: white; border-radius: 12px; padding: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 16px;
-  }
-  .card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
-  
-  .form-row { display: flex; gap: 8px; margin-bottom: 12px; }
-  .form-row input {
-    flex: 1; padding: 12px 14px; border: 2px solid #e5e7eb;
-    border-radius: 8px; font-size: 0.95rem; font-family: inherit; outline: none;
-    transition: border-color 0.2s;
-  }
-  .form-row input:focus { border-color: #4318FF; }
-  .form-row button {
-    padding: 12px 20px; border: none; border-radius: 8px;
-    background: #4318FF; color: white; font-weight: 700; font-size: 0.9rem;
-    cursor: pointer; white-space: nowrap; transition: background 0.2s;
-  }
-  .form-row button:hover { background: #3510d8; }
-  
-  .stats {
-    display: flex; gap: 12px; margin-bottom: 16px;
-  }
-  .stat-box {
-    flex: 1; text-align: center; padding: 16px; border-radius: 10px;
-    background: #f5f0ff; border: 1px solid #ede5ff;
-  }
-  .stat-num { font-size: 1.8rem; font-weight: 800; color: #4318FF; }
-  .stat-label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; }
-  
-  .client-list { list-style: none; }
-  .client-item {
-    padding: 16px 0; border-bottom: 1px solid #f3f4f6;
-  }
-  .client-item:last-child { border-bottom: none; }
-  .client-top { display: flex; align-items: center; justify-content: space-between; }
-  .client-name { font-weight: 600; font-size: 0.95rem; }
-  .client-pass { 
-    font-family: monospace; font-size: 0.85rem; background: #f3f4f6;
-    padding: 4px 10px; border-radius: 6px; color: #374151; cursor: pointer;
-    transition: background 0.2s;
-  }
-  .client-pass:hover { background: #e5e7eb; }
-  .client-actions { display: flex; gap: 6px; align-items: center; }
-  .btn-sm {
-    padding: 6px 12px; border: none; border-radius: 6px;
-    font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
-  }
-  .btn-copy { background: #dbeafe; color: #1d4ed8; }
-  .btn-copy:hover { background: #bfdbfe; }
-  .btn-wa { background: #ede5ff; color: #3510d8; }
-  .btn-wa:hover { background: #d4c4ff; }
-  .btn-delete { background: #fee2e2; color: #dc2626; }
-  .btn-delete:hover { background: #fecaca; }
-  .btn-edit { background: #e0e7ff; color: #4338ca; }
-  .btn-edit:hover { background: #c7d2fe; }
-  
-  .product-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
-  .product-tag {
-    font-size: 0.7rem; font-weight: 600; padding: 3px 8px; border-radius: 12px;
-    background: #ede5ff; color: #5b21b6;
-  }
-  .product-tag.all { background: #fef3c7; color: #92400e; }
-  
-  .empty { text-align: center; padding: 40px 20px; color: #9ca3af; }
-  .empty .emoji { font-size: 2.5rem; margin-bottom: 8px; }
-  
-  .toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: #1f2937; color: white; padding: 12px 24px; border-radius: 10px;
-    font-size: 0.9rem; font-weight: 600; opacity: 0; transition: opacity 0.3s;
-    z-index: 1000; pointer-events: none;
-  }
-  .toast.show { opacity: 1; }
-  
-  .password-msg {
-    background: #fef3c7; border: 1px solid #fbbf24; border-radius: 10px;
-    padding: 16px; margin-bottom: 16px; font-size: 0.85rem; color: #92400e;
-  }
-  .password-msg strong { color: #78350f; }
+  body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #1f2937; min-height: 100vh; }
 
-  .admin-gate {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(135deg, #1e0880, #4318FF);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 2000;
-  }
+  /* === GATE === */
+  .admin-gate { position: fixed; inset: 0; background: linear-gradient(135deg, #1e0880, #4318FF); display: flex; align-items: center; justify-content: center; z-index: 2000; }
   .admin-gate.hidden { display: none; }
-  .admin-gate-box {
-    background: white; border-radius: 20px; padding: 40px; max-width: 380px;
-    width: 90%; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-  }
-  .admin-gate-box img { width: 60px; height: 60px; border-radius: 12px; object-fit: contain; margin-bottom: 16px; }
-  .admin-gate-box h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
-  .admin-gate-box p { font-size: 0.85rem; color: #6b7280; margin-bottom: 20px; }
-  .admin-gate-box input {
-    width: 100%; padding: 14px 18px; border: 2px solid #e5e7eb;
-    border-radius: 10px; font-size: 1rem; text-align: center;
-    font-family: inherit; outline: none; transition: border-color 0.2s;
-  }
-  .admin-gate-box input:focus { border-color: #4318FF; }
-  .admin-gate-box button {
-    width: 100%; padding: 14px; border: none; border-radius: 10px;
-    background: #4318FF; color: white; font-size: 1rem;
-    font-weight: 700; cursor: pointer; margin-top: 12px;
-  }
-  .admin-gate-box button:hover { background: #3510d8; }
-  .admin-gate-error { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; }
+  .gate-box { background: white; border-radius: 20px; padding: 40px; max-width: 380px; width: 90%; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
+  .gate-box img { width: 60px; height: 60px; border-radius: 12px; object-fit: contain; margin-bottom: 16px; }
+  .gate-box h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
+  .gate-box p { font-size: 0.85rem; color: #6b7280; margin-bottom: 20px; }
+  .gate-box input { width: 100%; padding: 14px 18px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 1rem; text-align: center; font-family: inherit; outline: none; transition: border-color 0.2s; }
+  .gate-box input:focus { border-color: #4318FF; }
+  .gate-box button { width: 100%; padding: 14px; border: none; border-radius: 10px; background: #4318FF; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 12px; }
+  .gate-error { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; }
 
-  /* Product selector */
-  .product-selector { margin: 12px 0; }
-  .product-selector label { font-size: 0.85rem; font-weight: 600; color: #374151; display: block; margin-bottom: 8px; }
-  .product-checks { display: flex; flex-wrap: wrap; gap: 6px; }
-  .product-check {
-    display: flex; align-items: center; gap: 4px;
-    background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;
-    padding: 6px 10px; cursor: pointer; transition: 0.2s; font-size: 0.8rem;
-  }
-  .product-check:hover { border-color: #4318FF; }
-  .product-check.selected { background: #ede5ff; border-color: #7c3aed; color: #5b21b6; }
-  .product-check input { display: none; }
+  /* === HEADER === */
+  .header { background: linear-gradient(135deg, #1e0880, #4318FF); color: white; padding: 20px 30px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-left img { width: 36px; height: 36px; border-radius: 8px; object-fit: contain; }
+  .header h1 { font-size: 1.2rem; font-weight: 800; }
+  .header .subtitle { font-size: 0.75rem; opacity: 0.7; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-right a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+  .header-right a:hover { color: white; }
 
-  /* Edit modal */
-  .edit-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; align-items: center; justify-content: center; }
-  .edit-overlay.active { display: flex; }
-  .edit-modal { background: white; border-radius: 16px; padding: 28px; width: 420px; max-width: 92vw; animation: modalIn 0.3s ease; }
+  /* === MAIN === */
+  .main { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+
+  /* === STATS === */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); position: relative; overflow: hidden; }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; border-radius: 0 4px 4px 0; }
+  .stat-card.purple::before { background: #7c3aed; }
+  .stat-card.green::before { background: #10b981; }
+  .stat-card.orange::before { background: #f59e0b; }
+  .stat-card.blue::before { background: #3b82f6; }
+  .stat-card.red::before { background: #ef4444; }
+  .stat-card .stat-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .stat-card .stat-value { font-size: 1.8rem; font-weight: 800; color: #1f2937; }
+  .stat-card .stat-label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* === CHART === */
+  .chart-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 24px; }
+  .chart-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mini-chart { background: #f9fafb; border-radius: 12px; padding: 16px; text-align: center; }
+  .mini-chart .label { font-size: 0.75rem; color: #6b7280; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .mini-chart .bar-container { display: flex; gap: 6px; align-items: flex-end; justify-content: center; height: 80px; }
+  .mini-chart .bar { width: 24px; border-radius: 4px 4px 0 0; transition: 0.3s; }
+  .mini-chart .bar-label { font-size: 0.6rem; color: #9ca3af; margin-top: 4px; }
+
+  /* === SECTION === */
+  .section { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 24px; overflow: hidden; }
+  .section-header { padding: 20px 24px; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .section-header h2 { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+  /* === CONTROLS === */
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .search-box { position: relative; }
+  .search-box input { padding: 8px 12px 8px 34px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; font-family: inherit; outline: none; width: 200px; transition: 0.2s; }
+  .search-box input:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+  .search-box::before { content: '🔍'; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; }
+  .filter-select { padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; font-family: inherit; outline: none; background: white; cursor: pointer; }
+  .filter-select:focus { border-color: #7c3aed; }
+
+  /* === ADD FORM === */
+  .add-form { padding: 20px 24px; border-bottom: 1px solid #f3f4f6; background: #fafbfc; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 0.7rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group input, .form-group select { padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; font-family: inherit; outline: none; transition: 0.2s; }
+  .form-group input:focus, .form-group select:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+  .btn-add { padding: 10px 20px; border: none; border-radius: 8px; background: #4318FF; color: white; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+  .btn-add:hover { background: #3510d8; transform: translateY(-1px); }
+
+  /* === CLIENT LIST === */
+  .client-list { list-style: none; }
+  .client-item { display: flex; align-items: center; gap: 12px; padding: 14px 24px; border-bottom: 1px solid #f3f4f6; transition: 0.15s; }
+  .client-item:hover { background: #f9fafb; }
+  .client-item:last-child { border-bottom: none; }
+
+  .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.online { background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,0.5); }
+  .status-dot.offline { background: #d1d5db; }
+
+  .client-info { flex: 1; min-width: 0; }
+  .client-name { font-weight: 700; font-size: 0.9rem; }
+  .client-phone { font-size: 0.78rem; color: #6b7280; }
+  .client-pass { font-family: monospace; font-size: 0.78rem; background: #f3f4f6; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+  .client-pass:hover { background: #e5e7eb; }
+
+  .client-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .tag { font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: 12px; white-space: nowrap; }
+  .tag-yape { background: #fef3c7; color: #92400e; }
+  .tag-plin { background: #dbeafe; color: #1e40af; }
+  .tag-transfer { background: #d1fae5; color: #065f46; }
+  .tag-cash { background: #f3f4f6; color: #374151; }
+  .tag-none { background: #fee2e2; color: #991b1b; }
+  .tag-product { background: #ede5ff; color: #5b21b6; }
+  .tag-expired { background: #fee2e2; color: #dc2626; }
+  .tag-active { background: #d1fae5; color: #065f46; }
+  .last-seen { font-size: 0.68rem; color: #9ca3af; }
+
+  .client-amount { font-size: 0.85rem; font-weight: 700; color: #059669; min-width: 60px; text-align: right; }
+
+  .client-actions { display: flex; gap: 4px; }
+  .btn-sm { padding: 6px 10px; border: none; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; transition: 0.15s; }
+  .btn-sm:hover { transform: translateY(-1px); }
+  .btn-edit { background: #e0e7ff; color: #4338ca; }
+  .btn-wa { background: #d1fae5; color: #065f46; }
+  .btn-del { background: #fee2e2; color: #dc2626; }
+
+  .empty { text-align: center; padding: 50px 20px; color: #9ca3af; }
+  .empty .emoji { font-size: 2.5rem; margin-bottom: 8px; }
+
+  /* === EDIT MODAL === */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; align-items: center; justify-content: center; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: white; border-radius: 20px; padding: 32px; width: 480px; max-width: 94vw; max-height: 90vh; overflow-y: auto; animation: modalIn 0.3s ease; }
   @keyframes modalIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-  .edit-modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
-  .edit-modal .btn-save {
-    width: 100%; padding: 12px; border: none; border-radius: 10px;
-    background: #4318FF; color: white; font-weight: 700; font-size: 0.95rem;
-    cursor: pointer; margin-top: 16px;
+  .modal h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; }
+  .modal .form-group { margin-bottom: 14px; }
+  .modal .form-group input, .modal .form-group select, .modal .form-group textarea { width: 100%; }
+  .modal .form-group textarea { resize: vertical; min-height: 60px; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; font-family: inherit; outline: none; }
+  .modal .btn-save { width: 100%; padding: 14px; border: none; border-radius: 10px; background: #4318FF; color: white; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 8px; transition: 0.2s; }
+  .modal .btn-save:hover { background: #3510d8; }
+  .modal .btn-cancel { width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 10px; background: white; color: #6b7280; font-weight: 600; font-size: 0.85rem; cursor: pointer; margin-top: 8px; }
+
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1f2937; color: white; padding: 12px 24px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; opacity: 0; transition: opacity 0.3s; z-index: 2000; pointer-events: none; }
+  .toast.show { opacity: 1; }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-grid { grid-template-columns: 1fr 1fr; }
+    .chart-row { grid-template-columns: 1fr; }
+    .client-item { flex-wrap: wrap; padding: 12px 16px; }
+    .client-meta { order: 5; width: 100%; margin-top: 4px; }
+    .client-actions { order: 4; }
   }
-  .edit-modal .btn-save:hover { background: #3510d8; }
-  .edit-modal .btn-cancel {
-    width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 10px;
-    background: white; color: #6b7280; font-weight: 600; font-size: 0.85rem;
-    cursor: pointer; margin-top: 8px;
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
+<!-- GATE -->
 <div class="admin-gate" id="adminGate">
-  <div class="admin-gate-box">
+  <div class="gate-box">
     <img src="logo.jpg" alt="Logo">
     <h2>Panel de Administración</h2>
     <p>Ingresa la contraseña para acceder</p>
     <input type="password" id="adminPass" placeholder="Contraseña" autofocus>
-    <button onclick="checkAdminGate()">Entrar</button>
-    <div class="admin-gate-error" id="adminGateError">Contraseña incorrecta.</div>
+    <button onclick="checkGate()">Entrar</button>
+    <div class="gate-error" id="gateError">Contraseña incorrecta.</div>
   </div>
 </div>
 
-<div class="admin-header">
-  <h1><img src="logo.jpg" alt="Logo" style="width: 36px; height: 36px; object-fit: contain; vertical-align: middle; margin-right: 8px; border-radius: 6px;">Panel de Administración</h1>
-  <p>Gestiona los accesos de tus clientes</p>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <img src="logo.jpg" alt="Logo">
+    <div>
+      <h1>Aldus Technology</h1>
+      <div class="subtitle">Panel de Administración</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <a href="index.html" target="_blank">🌐 Ver Portal</a>
+    <a href="plantillas.html" target="_blank">📊 Plantillas</a>
+  </div>
 </div>
 
-<div class="container">
-  <div class="card">
-    <h2>📊 Resumen</h2>
-    <div class="stats">
-      <div class="stat-box">
-        <div class="stat-num" id="totalClients">0</div>
-        <div class="stat-label">Clientes</div>
+<!-- MAIN -->
+<div class="main">
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card purple">
+      <div class="stat-icon">👥</div>
+      <div class="stat-value" id="statTotal">0</div>
+      <div class="stat-label">Total Clientes</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon">💰</div>
+      <div class="stat-value" id="statRevenue">S/0</div>
+      <div class="stat-label">Ingresos Totales</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-icon">🟢</div>
+      <div class="stat-value" id="statOnline">0</div>
+      <div class="stat-label">En Linea</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-icon">📱</div>
+      <div class="stat-value" id="statYape">0</div>
+      <div class="stat-label">Yape / Plin</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-icon">⏰</div>
+      <div class="stat-value" id="statExpiring">0</div>
+      <div class="stat-label">Por Vencer (7 dias)</div>
+    </div>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-card">
+    <h3>📊 Resumen</h3>
+    <div class="chart-row">
+      <div class="mini-chart">
+        <div class="label">Clientes por Metodo de Pago</div>
+        <div class="bar-container" id="paymentBars"></div>
       </div>
-      <div class="stat-box">
-        <div class="stat-num" id="totalActive">0</div>
-        <div class="stat-label">Activos</div>
+      <div class="mini-chart">
+        <div class="label">Clientes por Mes (ultimos 6)</div>
+        <div class="bar-container" id="monthBars"></div>
       </div>
     </div>
   </div>
-  
-  <div class="card">
-    <h2>➕ Agregar Cliente</h2>
-    <div class="form-row">
-      <input type="text" id="clientPhone" placeholder="Número WhatsApp (ej: 999888777)">
-      <input type="text" id="clientName" placeholder="Nombre (opcional)">
+
+  <!-- CLIENTS -->
+  <div class="section">
+    <div class="section-header">
+      <h2>👥 Clientes</h2>
+      <div class="controls">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Buscar..." oninput="renderClients()">
+        </div>
+        <select class="filter-select" id="filterStatus" onchange="renderClients()">
+          <option value="todos">Todos</option>
+          <option value="active">Activos</option>
+          <option value="inactive">Inactivos</option>
+          <option value="online">En linea</option>
+          <option value="expiring">Por vencer</option>
+        </select>
+        <select class="filter-select" id="filterPayment" onchange="renderClients()">
+          <option value="todos">Todos pagos</option>
+          <option value="yape">Yape</option>
+          <option value="plin">Plin</option>
+          <option value="transferencia">Transferencia</option>
+          <option value="efectivo">Efectivo</option>
+          <option value="sin-pago">Sin pago</option>
+        </select>
+      </div>
     </div>
-    <div class="product-selector">
-      <label>Productos a los que tendrá acceso:</label>
-      <div class="product-checks" id="productChecksAdd"></div>
+
+    <!-- ADD FORM -->
+    <div class="add-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Telefono WhatsApp</label>
+          <input type="text" id="addPhone" placeholder="Ej: 999888777" inputmode="numeric">
+        </div>
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" id="addName" placeholder="Nombre del cliente">
+        </div>
+        <div class="form-group">
+          <label>Producto</label>
+          <select id="addProduct">
+            <option value="plantillas">📊 Plantillas Excel</option>
+          </select>
+        </div>
+        <button class="btn-add" onclick="addClient()">+ Agregar</button>
+      </div>
     </div>
-    <div class="form-row">
-      <button onclick="addClient()" style="width:100%">Agregar Cliente</button>
-    </div>
-    <div class="password-msg">
-      💡 <strong>Usuario:</strong> El número de WhatsApp del cliente<br>
-      💡 <strong>Contraseña:</strong> Se genera automáticamente (últimos 6 dígitos con prefijo PE)<br>
-      Ejemplo: 999888777 → usuario <strong>999888777</strong> contraseña <strong>PE888777</strong>
-    </div>
-  </div>
-  
-  <div class="card">
-    <h2>👥 Clientes Activos</h2>
+
+    <!-- LIST -->
     <ul class="client-list" id="clientList">
-      <li class="empty">
-        <div class="emoji">📭</div>
-        <p>No hay clientes aún. Agrega uno arriba.</p>
-      </li>
+      <li class="empty"><div class="emoji">📭</div><p>Cargando clientes...</p></li>
     </ul>
   </div>
-  
-  <div class="card" style="background: #f5f0ff; border: 1px solid #ede5ff;">
-    <h2>📋 Cómo usar</h2>
-    <ol style="font-size: 0.9rem; line-height: 1.8; padding-left: 20px; color: #374151;">
-      <li>Cliente te escribe por <strong>WhatsApp</strong></li>
-      <li>Tú vendes el producto</li>
-      <li>Agregas al cliente y <strong>seleccionas los productos</strong> que compró</li>
-      <li>Haz clic en <strong>"WhatsApp"</strong> para enviarle sus datos</li>
-      <li>El cliente entra a tu web → hace click en su producto → escribe <strong>usuario</strong> y <strong>contraseña</strong></li>
-      <li>¡Listo! Puede acceder a sus productos</li>
-    </ol>
-  </div>
 </div>
 
-<!-- EDIT PRODUCTS MODAL -->
-<div class="edit-overlay" id="editOverlay">
-  <div class="edit-modal">
-    <h3>Editar productos de <span id="editClientName"></span></h3>
-    <div class="product-selector">
-      <label>Productos asignados:</label>
-      <div class="product-checks" id="productChecksEdit"></div>
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editOverlay">
+  <div class="modal">
+    <h3>✏️ Editar cliente</h3>
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" id="editName">
     </div>
-    <button class="btn-save" onclick="saveProducts()">Guardar cambios</button>
+    <div class="form-group">
+      <label>Metodo de Pago</label>
+      <select id="editPayment">
+        <option value="">Sin registrar</option>
+        <option value="yape">Yape</option>
+        <option value="plin">Plin</option>
+        <option value="transferencia">Transferencia</option>
+        <option value="efectivo">Efectivo</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Monto Pagado (S/)</label>
+      <input type="number" id="editAmount" min="0" step="0.5">
+    </div>
+    <div class="form-group">
+      <label>Fecha de Expiracion</label>
+      <input type="date" id="editExpiry">
+    </div>
+    <div class="form-group">
+      <label>Productos</label>
+      <div id="editProducts" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+    <div class="form-group">
+      <label>Notas</label>
+      <textarea id="editNotes" placeholder="Ej: Pagó por Yape, referido por Juan..."></textarea>
+    </div>
+    <button class="btn-save" onclick="saveEdit()">Guardar Cambios</button>
     <button class="btn-cancel" onclick="closeEdit()">Cancelar</button>
   </div>
 </div>
@@ -253,274 +327,304 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
 <script>
-  // ── Admin Gate ──
-  const ADMIN_PASS = '@Politaxi123*';
-
-  function checkAdminGate() {
-    const input = document.getElementById('adminPass');
-    const error = document.getElementById('adminGateError');
-    if (input.value === ADMIN_PASS) {
-      sessionStorage.setItem('admin_ok', '1');
-      document.getElementById('adminGate').classList.add('hidden');
-      error.style.display = 'none';
-    } else {
-      error.style.display = 'block';
-      input.value = '';
-      input.focus();
-    }
-  }
-
-  document.getElementById('adminPass').addEventListener('keydown', e => {
-    if (e.key === 'Enter') checkAdminGate();
-  });
-
-  if (sessionStorage.getItem('admin_ok') === '1') {
+// ── GATE ──
+const ADMIN_PASS = '@Politaxi123*';
+function checkGate() {
+  const input = document.getElementById('adminPass');
+  const error = document.getElementById('gateError');
+  if (input.value === ADMIN_PASS) {
+    sessionStorage.setItem('admin_ok', '1');
     document.getElementById('adminGate').classList.add('hidden');
+  } else {
+    error.style.display = 'block';
+    input.value = '';
+    input.focus();
+  }
+}
+document.getElementById('adminPass').addEventListener('keydown', e => { if (e.key === 'Enter') checkGate(); });
+if (sessionStorage.getItem('admin_ok') === '1') document.getElementById('adminGate').classList.add('hidden');
+
+// ── SUPABASE ──
+const SUPABASE_URL = 'https://emwmyfhjdjyknxfsdnyg.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtd215ZmhqZGp5a254ZnNkbnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzc5NTgsImV4cCI6MjEwMzYxMzk1OH0.gn902cjDSjXGLzB7_bR0l519obVEFvUFBRZpRBq81CM';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+const PRODUCTS = [
+  { slug: 'plantillas', name: 'Plantillas Excel', icon: '📊' }
+];
+
+let allClients = [];
+let editClientId = null;
+
+// ── HELPERS ──
+function genPassword(phone) {
+  return 'PE' + phone.replace(/[^0-9]/g, '').slice(-6);
+}
+
+function isOnline(client) {
+  if (!client.last_seen) return false;
+  return (Date.now() - new Date(client.last_seen).getTime()) < 15 * 60 * 1000;
+}
+
+function isExpiring(client) {
+  if (!client.expires_at) return false;
+  const diff = new Date(client.expires_at).getTime() - Date.now();
+  return diff > 0 && diff < 7 * 24 * 60 * 60 * 1000;
+}
+
+function isExpired(client) {
+  if (!client.expires_at) return false;
+  return new Date(client.expires_at).getTime() < Date.now();
+}
+
+function timeAgo(ts) {
+  if (!ts) return 'Nunca';
+  const diff = Date.now() - new Date(ts).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Ahora';
+  if (mins < 60) return mins + ' min';
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return hours + 'h';
+  const days = Math.floor(hours / 24);
+  return days + 'd';
+}
+
+function paymentLabel(m) {
+  const map = { yape: 'Yape', plin: 'Plin', transferencia: 'Transfer.', efectivo: 'Efectivo' };
+  return map[m] || 'Sin pago';
+}
+
+function paymentClass(m) {
+  const map = { yape: 'tag-yape', plin: 'tag-plin', transferencia: 'tag-transfer', efectivo: 'tag-cash' };
+  return map[m] || 'tag-none';
+}
+
+// ── LOAD ──
+async function loadClients() {
+  try {
+    const { data, error } = await supabase.from('clients').select('*').order('created_at', { ascending: false });
+    if (error) { toast('❌ Error: ' + error.message); return; }
+    allClients = data || [];
+    renderClients();
+    renderStats();
+  } catch (e) {
+    toast('❌ Error conexión: ' + e.message);
+  }
+}
+
+// ── ADD ──
+async function addClient() {
+  const phone = document.getElementById('addPhone').value.trim().replace(/[^0-9]/g, '');
+  const name = document.getElementById('addName').value.trim() || phone;
+  const product = document.getElementById('addProduct').value;
+
+  if (!phone || phone.length < 6) { toast('⚠️ Ingresa un teléfono válido'); return; }
+  if (allClients.find(c => c.phone === phone)) { toast('⚠️ Ya existe ese número'); return; }
+
+  const password = genPassword(phone);
+  toast('⏳ Guardando...');
+
+  const { error } = await supabase.from('clients').insert({
+    phone, name, password, active: true, products: [product]
+  });
+
+  if (error) { toast('❌ Error: ' + error.message); return; }
+
+  document.getElementById('addPhone').value = '';
+  document.getElementById('addName').value = '';
+  toast('✅ ' + name + ' agregado');
+  await loadClients();
+}
+
+// ── DELETE ──
+async function deleteClient(id) {
+  const c = allClients.find(x => x.id === id);
+  if (!c || !confirm('¿Eliminar a "' + c.name + '"?')) return;
+  await supabase.from('clients').delete().eq('id', id);
+  toast('🗑️ Eliminado');
+  await loadClients();
+}
+
+// ── TOGGLE ACTIVE ──
+async function toggleActive(id) {
+  const c = allClients.find(x => x.id === id);
+  if (!c) return;
+  await supabase.from('clients').update({ active: !c.active }).eq('id', id);
+  toast(c.active ? '🔴 Desactivado' : '🟢 Activado');
+  await loadClients();
+}
+
+// ── EDIT ──
+function openEdit(id) {
+  const c = allClients.find(x => x.id === id);
+  if (!c) return;
+  editClientId = id;
+  document.getElementById('editName').value = c.name;
+  document.getElementById('editPayment').value = c.payment_method || '';
+  document.getElementById('editAmount').value = c.amount_paid || '';
+  document.getElementById('editExpiry').value = c.expires_at ? c.expires_at.split('T')[0] : '';
+  document.getElementById('editNotes').value = c.notes || '';
+
+  const prodDiv = document.getElementById('editProducts');
+  prodDiv.innerHTML = PRODUCTS.map(p => {
+    const checked = (c.products || []).includes(p.slug);
+    return `<div class="product-check ${checked ? 'selected' : ''}" data-slug="${p.slug}" onclick="this.classList.toggle('selected')" style="cursor:pointer;padding:6px 12px;border-radius:8px;border:1px solid ${checked ? '#7c3aed' : '#e5e7eb'};background:${checked ? '#ede5ff' : '#f9fafb'};font-size:0.8rem;font-weight:600;">
+      ${p.icon} ${p.name}
+    </div>`;
+  }).join('');
+
+  document.getElementById('editOverlay').classList.add('active');
+}
+
+function closeEdit() {
+  document.getElementById('editOverlay').classList.remove('active');
+  editClientId = null;
+}
+
+async function saveEdit() {
+  if (!editClientId) return;
+  const products = Array.from(document.querySelectorAll('#editProducts .product-check.selected')).map(el => el.dataset.slug);
+  const expiry = document.getElementById('editExpiry').value;
+
+  const { error } = await supabase.from('clients').update({
+    name: document.getElementById('editName').value.trim(),
+    payment_method: document.getElementById('editPayment').value,
+    amount_paid: parseFloat(document.getElementById('editAmount').value) || 0,
+    expires_at: expiry ? expiry + 'T23:59:59Z' : null,
+    notes: document.getElementById('editNotes').value.trim(),
+    products
+  }).eq('id', editClientId);
+
+  if (error) { toast('❌ Error: ' + error.message); return; }
+  toast('✅ Guardado');
+  closeEdit();
+  await loadClients();
+}
+
+// ── WHATSAPP ──
+function sendWhatsApp(c) {
+  const prods = (c.products || []).map(s => { const p = PRODUCTS.find(pr => pr.slug === s); return p ? p.icon + ' ' + p.name : s; }).join('\n');
+  const msg = encodeURIComponent(
+    'Hola ' + c.name + ' 👋\n\n' +
+    'Ya tienes acceso a nuestros productos digitales 📦\n\n' +
+    '👤 Usuario: *' + c.phone + '*\n' +
+    '🔐 Contraseña: *' + c.password + '*\n\n' +
+    '📦 Tus productos:\n' + prods + '\n\n' +
+    'Ingresa a: https://tienda-plantillas-peru.vercel.app\n\n' +
+    'Haz click en tu producto, ingresa tus datos y accede. Si tienes dudas, escribeme 😊'
+  );
+  window.open('https://wa.me/' + c.phone + '?text=' + msg, '_blank');
+  toast('📱 WhatsApp abierto');
+}
+
+// ── RENDER STATS ──
+function renderStats() {
+  const total = allClients.length;
+  const revenue = allClients.reduce((sum, c) => sum + (parseFloat(c.amount_paid) || 0), 0);
+  const online = allClients.filter(isOnline).length;
+  const yapePlin = allClients.filter(c => c.payment_method === 'yape' || c.payment_method === 'plin').length;
+  const expiring = allClients.filter(isExpiring).length;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statRevenue').textContent = 'S/' + revenue.toFixed(0);
+  document.getElementById('statOnline').textContent = online;
+  document.getElementById('statYape').textContent = yapePlin;
+  document.getElementById('statExpiring').textContent = expiring;
+
+  // Payment bars
+  const methods = ['yape', 'plin', 'transferencia', 'efectivo', ''];
+  const colors = ['#f59e0b', '#3b82f6', '#10b981', '#6b7280', '#ef4444'];
+  const labels = ['Yape', 'Plin', 'Transf.', 'Efectivo', 'Sin pago'];
+  const maxCount = Math.max(1, ...methods.map(m => allClients.filter(c => (c.payment_method || '') === m).length));
+  document.getElementById('paymentBars').innerHTML = methods.map((m, i) => {
+    const count = allClients.filter(c => (c.payment_method || '') === m).length;
+    const h = Math.max(4, (count / maxCount) * 70);
+    return `<div style="text-align:center;"><div class="bar" style="height:${h}px;background:${colors[i]};"></div><div class="bar-label">${labels[i]}<br>${count}</div></div>`;
+  }).join('');
+
+  // Month bars
+  const months = [];
+  const monthLabels = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(); d.setMonth(d.getMonth() - i);
+    const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    months.push(allClients.filter(c => c.created_at && c.created_at.startsWith(key)).length);
+    monthLabels.push(d.toLocaleDateString('es', { month: 'short' }));
+  }
+  const maxMonth = Math.max(1, ...months);
+  document.getElementById('monthBars').innerHTML = months.map((count, i) => {
+    const h = Math.max(4, (count / maxMonth) * 70);
+    return `<div style="text-align:center;"><div class="bar" style="height:${h}px;background:#7c3aed;"></div><div class="bar-label">${monthLabels[i]}<br>${count}</div></div>`;
+  }).join('');
+}
+
+// ── RENDER CLIENTS ──
+function renderClients() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const statusFilter = document.getElementById('filterStatus').value;
+  const paymentFilter = document.getElementById('filterPayment').value;
+
+  let filtered = allClients.filter(c => {
+    if (search && !c.name.toLowerCase().includes(search) && !c.phone.includes(search)) return false;
+    if (statusFilter === 'active' && !c.active) return false;
+    if (statusFilter === 'inactive' && c.active) return false;
+    if (statusFilter === 'online' && !isOnline(c)) return false;
+    if (statusFilter === 'expiring' && !isExpiring(c)) return false;
+    if (paymentFilter === 'sin-pago' && c.payment_method) return false;
+    if (paymentFilter !== 'todos' && paymentFilter !== 'sin-pago' && c.payment_method !== paymentFilter) return false;
+    return true;
+  });
+
+  const list = document.getElementById('clientList');
+  if (filtered.length === 0) {
+    list.innerHTML = '<li class="empty"><div class="emoji">📭</div><p>No hay clientes que coincidan</p></li>';
+    return;
   }
 
-  // ── Supabase ──
-  var allClients = [];
-  const SUPABASE_URL = 'https://emwmyfhjdjyknxfsdnyg.supabase.co';
-  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtd215ZmhqZGp5a254ZnNkbnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzc5NTgsImV4cCI6MjEwMzYxMzk1OH0.gn902cjDSjXGLzB7_bR0l519obVEFvUFBRZpRBq81CM';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  list.innerHTML = filtered.map(c => {
+    const online = isOnline(c);
+    const expired = isExpired(c);
+    const expiring = isExpiring(c);
+    const prods = (c.products || []).map(s => { const p = PRODUCTS.find(pr => pr.slug === s); return p ? `<span class="tag tag-product">${p.icon} ${p.name}</span>` : ''; }).join('');
 
-  // ── Products ──
-  const PRODUCTS = [
-    { slug: 'plantillas', name: 'Plantillas Excel', icon: '📊' }
-  ];
-
-  let editClientId = null;
-  let selectedAdd = [];
-  let selectedEdit = [];
-
-  function renderProductChecks(containerId, selected, onChange) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = PRODUCTS.map(p => {
-      const isChecked = selected.includes(p.slug);
-      return `<div class="product-check ${isChecked ? 'selected' : ''}" data-slug="${p.slug}" onclick="toggleProduct(this, '${containerId}')">
-        <span>${p.icon}</span>
-        <span>${p.name}</span>
-      </div>`;
-    }).join('');
-  }
-
-  function toggleProduct(el, containerId) {
-    const slug = el.dataset.slug;
-    el.classList.toggle('selected');
-  }
-
-  function getSelectedProducts(containerId) {
-    return Array.from(document.querySelectorAll(`#${containerId} .product-check.selected`)).map(el => el.dataset.slug);
-  }
-
-  // Init product checks for add form
-  renderProductChecks('productChecksAdd', []);
-
-  function generatePassword(phone) {
-    const clean = phone.replace(/[^0-9]/g, '').slice(-6);
-    return 'PE' + clean;
-  }
-
-  async function loadClients() {
-    try {
-      const { data, error } = await supabase
-        .from('clients')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        showToast('❌ Error cargando: ' + error.message);
-        return;
-      }
-      allClients = data || [];
-      renderClients();
-    } catch (e) {
-      showToast('❌ Error conexión: ' + e.message);
-    }
-  }
-
-  async function addClient() {
-    try {
-      const phoneInput = document.getElementById('clientPhone');
-      const nameInput = document.getElementById('clientName');
-      const phone = phoneInput.value.trim().replace(/[^0-9]/g, '');
-      const name = nameInput.value.trim() || phone;
-      const products = getSelectedProducts('productChecksAdd');
-
-      if (!phone || phone.length < 6) {
-        phoneInput.focus();
-        showToast('⚠️ Ingresa un número válido');
-        return;
-      }
-
-      if (products.length === 0) {
-        showToast('⚠️ Selecciona al menos un producto');
-        return;
-      }
-
-      const password = generatePassword(phone);
-
-      if (allClients.find(c => c.phone === phone)) {
-        showToast('⚠️ Ya existe un cliente con ese número');
-        return;
-      }
-
-      showToast('⏳ Guardando...');
-
-      const { data, error } = await supabase
-        .from('clients')
-        .insert({ phone, name, password, active: true, products })
-        .select();
-
-      if (error) {
-        showToast('❌ Error: ' + error.message);
-        return;
-      }
-
-      phoneInput.value = '';
-      nameInput.value = '';
-      selectedAdd = [];
-      renderProductChecks('productChecksAdd', []);
-      phoneInput.focus();
-      showToast('✅ Cliente "' + name + '" agregado');
-      await loadClients();
-    } catch (e) {
-      showToast('❌ Error: ' + e.message);
-    }
-  }
-
-  async function deleteClient(id) {
-    const client = allClients.find(c => c.id === id);
-    if (!client || !confirm('¿Eliminar acceso de "' + client.name + '"?')) return;
-
-    const { error } = await supabase
-      .from('clients')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      showToast('❌ Error eliminando cliente');
-      return;
-    }
-
-    showToast('🗑️ Cliente eliminado');
-    await loadClients();
-  }
-
-  function openEdit(id) {
-    const client = allClients.find(c => c.id === id);
-    if (!client) return;
-    editClientId = id;
-    selectedEdit = client.products || [];
-    document.getElementById('editClientName').textContent = client.name;
-    renderProductChecks('productChecksEdit', selectedEdit);
-    document.getElementById('editOverlay').classList.add('active');
-  }
-
-  function closeEdit() {
-    document.getElementById('editOverlay').classList.remove('active');
-    editClientId = null;
-  }
-
-  async function saveProducts() {
-    if (!editClientId) return;
-    const products = getSelectedProducts('productChecksEdit');
-
-    const { error } = await supabase
-      .from('clients')
-      .update({ products })
-      .eq('id', editClientId);
-
-    if (error) {
-      showToast('❌ Error: ' + error.message);
-      return;
-    }
-
-    showToast('✅ Productos actualizados');
-    closeEdit();
-    await loadClients();
-  }
-
-  function copyPassword(password) {
-    navigator.clipboard.writeText(password).then(() => {
-      showToast('📋 Contraseña copiada: ' + password);
-    });
-  }
-
-  function sendWhatsApp(name, phone, password, products) {
-    const productNames = (products || []).map(slug => {
-      const p = PRODUCTS.find(pr => pr.slug === slug);
-      return p ? p.icon + ' ' + p.name : slug;
-    }).join('\n');
-
-    const msg = encodeURIComponent(
-      'Hola ' + name + ' 👋\n\n' +
-      'Ya tienes acceso a nuestros productos digitales 📦\n\n' +
-      '👤 Usuario: *' + phone + '*\n' +
-      '🔐 Contraseña: *' + password + '*\n\n' +
-      '📦 Tus productos:\n' + productNames + '\n\n' +
-      'Ingresa a: https://tienda-plantillas-peru.vercel.app\n\n' +
-      'Haz click en tu producto, ingresa tus datos y accede. Si tienes dudas, escribeme 😊'
-    );
-    window.open('https://wa.me/?text=' + msg, '_blank');
-    showToast('📱 Mensaje abierto para enviar por WhatsApp');
-  }
-
-  function renderClients() {
-    const list = document.getElementById('clientList');
-    document.getElementById('totalClients').textContent = allClients.length;
-    document.getElementById('totalActive').textContent = allClients.filter(c => c.active).length;
-
-    if (allClients.length === 0) {
-      list.innerHTML = '<li class="empty"><div class="emoji">📭</div><p>No hay clientes aún. Agrega uno arriba.</p></li>';
-      return;
-    }
-
-    list.innerHTML = allClients.map(c => {
-      const prods = c.products || [];
-      const tags = prods.length === 0
-        ? '<span class="product-tag" style="background:#fee2e2;color:#dc2626;">Sin productos</span>'
-        : prods.map(slug => {
-            const p = PRODUCTS.find(pr => pr.slug === slug);
-            return p ? `<span class="product-tag">${p.icon} ${p.name}</span>` : '';
-          }).join('');
-
-      return `
-      <li class="client-item">
-        <div class="client-top">
-          <div>
-            <div class="client-name">${c.name}</div>
-            <div style="font-size: 0.8rem; color: #6b7280;">📱 ${c.phone}</div>
-            <span class="client-pass" onclick="copyPassword('${c.password}')" title="Clic para copiar">🔑 ${c.password}</span>
-            <div class="product-tags">${tags}</div>
-          </div>
-          <div class="client-actions">
-            <button class="btn-sm btn-edit" onclick="openEdit(${c.id})">✏️ Productos</button>
-            <button class="btn-sm btn-copy" onclick="copyPassword('${c.password}')">📋</button>
-            <button class="btn-sm btn-wa" onclick="sendWhatsApp('${c.name.replace(/'/g, "\\'")}', '${c.phone}', '${c.password}', ${JSON.stringify(prods)})">💬</button>
-            <button class="btn-sm btn-delete" onclick="deleteClient(${c.id})">🗑️</button>
-          </div>
+    return `<li class="client-item">
+      <div class="status-dot ${online ? 'online' : 'offline'}" title="${online ? 'En linea' : 'Desconectado'}"></div>
+      <div class="client-info">
+        <div class="client-name">${c.name} ${!c.active ? '<span style="color:#dc2626;font-size:0.7rem;">INACTIVO</span>' : ''}</div>
+        <div class="client-phone">📱 ${c.phone} · <span class="client-pass" onclick="navigator.clipboard.writeText('${c.password}');toast('📋 Copiada: ${c.password}')">🔑 ${c.password}</span></div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">
+          ${prods}
+          <span class="tag ${paymentClass(c.payment_method)}">${paymentLabel(c.payment_method)}</span>
+          ${expired ? '<span class="tag tag-expired">VENCIDO</span>' : ''}
+          ${expiring ? '<span class="tag tag-expired">POR VENCER</span>' : ''}
+          <span class="last-seen">🕐 ${timeAgo(c.last_seen)}</span>
         </div>
-      </li>`;
-    }).join('');
-  }
+      </div>
+      <div class="client-amount">${c.amount_paid > 0 ? 'S/' + c.amount_paid : ''}</div>
+      <div class="client-actions">
+        <button class="btn-sm btn-edit" onclick="openEdit(${c.id})">✏️</button>
+        <button class="btn-sm btn-wa" onclick="sendWhatsApp(allClients.find(x=>x.id===${c.id}))">💬</button>
+        <button class="btn-sm" style="background:${c.active ? '#fee2e2' : '#d1fae5'};color:${c.active ? '#dc2626' : '#065f46'}" onclick="toggleActive(${c.id})">${c.active ? '🔴' : '🟢'}</button>
+        <button class="btn-sm btn-del" onclick="deleteClient(${c.id})">🗑️</button>
+      </div>
+    </li>`;
+  }).join('');
+}
 
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-  }
+// ── TOAST ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
 
-  document.getElementById('clientName').addEventListener('keydown', e => {
-    if (e.key === 'Enter') addClient();
-  });
+// ── MODAL CLOSE ──
+document.getElementById('editOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeEdit(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEdit(); });
 
-  document.getElementById('editOverlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeEdit();
-  });
-
-  loadClients();
+// ── INIT ──
+loadClients();
 </script>
 </body>
 </html>

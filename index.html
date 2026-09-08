@@ -400,6 +400,9 @@ async function validarLogin() {
       ts: Date.now()
     }));
 
+    // Registrar último acceso
+    supabase.from('clients').update({ last_seen: new Date().toISOString() }).eq('id', data.id).then();
+
     cerrarLogin();
     showToast('success', 'Bienvenido ' + data.name + '!');
 
