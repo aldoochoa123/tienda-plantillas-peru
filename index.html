@@ -114,6 +114,15 @@
     0%, 100% { transform: translateY(0); }
     50%      { transform: translateY(6px); }
   }
+  .btn-wrap { display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .hand-point {
+    font-size: 44px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+    animation: handPoint 1.2s ease-in-out infinite; flex-shrink: 0;
+  }
+  @keyframes handPoint {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    50%      { transform: translateX(8px) rotate(-10deg); }
+  }
   .btn-outline { background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.4); }
   .btn-outline:hover { background: rgba(255,255,255,0.25); }
   
@@ -297,7 +306,10 @@
       <div class="hero-stat"><span class="hero-stat-num">9</span><span class="hero-stat-label">Categorías</span></div>
     </div>
     <div class="hero-actions">
-      <a href="#" class="btn-descargar" onclick="descargarTodo(); return false;"><span class="icono">⬇️</span> Descargar todas las plantillas aquí</a>
+      <div class="btn-wrap">
+        <span class="hand-point">👉</span>
+        <a href="#" class="btn-descargar" onclick="descargarTodo(); return false;"><span class="icono">⬇️</span> Descargar todas las plantillas aquí</a>
+      </div>
     </div>
   </div>
 </section>
