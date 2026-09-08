@@ -29,15 +29,20 @@
   
   /* ── Hero ── */
   .hero {
-    background: linear-gradient(135deg, #1e0880 0%, #4318FF 50%, #6d5cff 100%);
+    background: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1400&q=80') center/cover no-repeat;
     color: white; padding: 60px 24px 80px; text-align: center;
     position: relative; overflow: hidden;
   }
   .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(30,8,128,0.82) 0%, rgba(67,24,255,0.72) 50%, rgba(109,92,255,0.65) 100%);
+    z-index: 1;
+  }
+  .hero::after {
     content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.08) 0%, transparent 50%),
-                radial-gradient(circle at 70% 30%, rgba(255,255,255,0.05) 0%, transparent 50%);
-    animation: shimmer 20s linear infinite;
+    background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.06) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(255,255,255,0.04) 0%, transparent 50%);
+    animation: shimmer 20s linear infinite; z-index: 1;
   }
   @keyframes shimmer { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   
