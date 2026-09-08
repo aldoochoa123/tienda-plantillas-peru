@@ -37,27 +37,48 @@
   .main { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
 
   /* === STATS === */
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .stat-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); position: relative; overflow: hidden; }
-  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; border-radius: 0 4px 4px 0; }
-  .stat-card.purple::before { background: #7c3aed; }
-  .stat-card.green::before { background: #10b981; }
-  .stat-card.orange::before { background: #f59e0b; }
-  .stat-card.blue::before { background: #3b82f6; }
-  .stat-card.red::before { background: #ef4444; }
-  .stat-card .stat-icon { font-size: 1.5rem; margin-bottom: 8px; }
-  .stat-card .stat-value { font-size: 1.8rem; font-weight: 800; color: #1f2937; }
-  .stat-card .stat-label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: white; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: default; }
+  .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; }
+  .stat-card.purple::before { background: linear-gradient(90deg, #7c3aed, #a855f7); }
+  .stat-card.green::before { background: linear-gradient(90deg, #059669, #34d399); }
+  .stat-card.orange::before { background: linear-gradient(90deg, #d97706, #fbbf24); }
+  .stat-card.blue::before { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+  .stat-card.red::before { background: linear-gradient(90deg, #dc2626, #f87171); }
+  .stat-card .stat-icon { font-size: 1.4rem; margin-bottom: 10px; }
+  .stat-card .stat-value { font-size: 2rem; font-weight: 800; color: #1f2937; transition: all 0.3s; }
+  .stat-card .stat-label { font-size: 0.72rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; font-weight: 600; }
+  .stat-card .stat-glow { position: absolute; bottom: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; opacity: 0.06; }
+  .stat-card.purple .stat-glow { background: #7c3aed; }
+  .stat-card.green .stat-glow { background: #10b981; }
+  .stat-card.orange .stat-glow { background: #f59e0b; }
+  .stat-card.blue .stat-glow { background: #3b82f6; }
+  .stat-card.red .stat-glow { background: #ef4444; }
+
+  /* === ANIMATIONS === */
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes countUp { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+  @keyframes barGrow { from { height: 0; } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  .animate-in { animation: fadeInUp 0.5s ease both; }
+  .stat-card:nth-child(1) { animation-delay: 0s; }
+  .stat-card:nth-child(2) { animation-delay: 0.1s; }
+  .stat-card:nth-child(3) { animation-delay: 0.2s; }
+  .stat-card:nth-child(4) { animation-delay: 0.3s; }
+  .stat-card:nth-child(5) { animation-delay: 0.4s; }
 
   /* === CHART === */
-  .chart-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 24px; }
-  .chart-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
-  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .mini-chart { background: #f9fafb; border-radius: 12px; padding: 16px; text-align: center; }
-  .mini-chart .label { font-size: 0.75rem; color: #6b7280; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .mini-chart .bar-container { display: flex; gap: 6px; align-items: flex-end; justify-content: center; height: 80px; }
-  .mini-chart .bar { width: 24px; border-radius: 4px 4px 0 0; transition: 0.3s; }
-  .mini-chart .bar-label { font-size: 0.6rem; color: #9ca3af; margin-top: 4px; }
+  .chart-card { background: white; border-radius: 16px; padding: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 24px; animation: fadeInUp 0.6s ease both; animation-delay: 0.3s; }
+  .chart-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .mini-chart { background: linear-gradient(135deg, #fafbfc, #f3f4f6); border-radius: 16px; padding: 24px 20px; text-align: center; }
+  .mini-chart .label { font-size: 0.75rem; color: #6b7280; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; }
+  .mini-chart .bar-container { display: flex; gap: 12px; align-items: flex-end; justify-content: center; height: 120px; padding: 0 8px; }
+  .mini-chart .bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 60px; }
+  .mini-chart .bar { width: 100%; min-width: 28px; border-radius: 8px 8px 0 0; transition: height 1s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }
+  .mini-chart .bar-value { font-size: 0.72rem; font-weight: 800; color: #374151; }
+  .mini-chart .bar-label { font-size: 0.65rem; color: #9ca3af; font-weight: 600; white-space: nowrap; }
 
   /* === SECTION === */
   .section { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 24px; overflow: hidden; }
@@ -147,10 +168,13 @@
     .client-item { flex-wrap: wrap; padding: 12px 16px; }
     .client-meta { order: 5; width: 100%; margin-top: 4px; }
     .client-actions { order: 4; }
+    .mini-chart .bar-container { gap: 8px; height: 100px; }
   }
   @media (max-width: 480px) {
     .stats-grid { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: 1fr; }
+    .mini-chart .bar-container { gap: 6px; height: 80px; }
+    .mini-chart .bar-wrap { max-width: 40px; }
   }
 </style>
 </head>
@@ -188,27 +212,32 @@
 
   <!-- STATS -->
   <div class="stats-grid">
-    <div class="stat-card purple">
+    <div class="stat-card purple animate-in">
+      <div class="stat-glow"></div>
       <div class="stat-icon">👥</div>
       <div class="stat-value" id="statTotal">0</div>
       <div class="stat-label">Total Clientes</div>
     </div>
-    <div class="stat-card green">
+    <div class="stat-card green animate-in">
+      <div class="stat-glow"></div>
       <div class="stat-icon">💰</div>
       <div class="stat-value" id="statRevenue">S/0</div>
       <div class="stat-label">Ingresos Totales</div>
     </div>
-    <div class="stat-card orange">
+    <div class="stat-card orange animate-in">
+      <div class="stat-glow"></div>
       <div class="stat-icon">🟢</div>
       <div class="stat-value" id="statOnline">0</div>
       <div class="stat-label">En Linea</div>
     </div>
-    <div class="stat-card blue">
+    <div class="stat-card blue animate-in">
+      <div class="stat-glow"></div>
       <div class="stat-icon">📱</div>
       <div class="stat-value" id="statYape">0</div>
       <div class="stat-label">Yape / Plin</div>
     </div>
-    <div class="stat-card red">
+    <div class="stat-card red animate-in">
+      <div class="stat-glow"></div>
       <div class="stat-icon">⏰</div>
       <div class="stat-value" id="statExpiring">0</div>
       <div class="stat-label">Por Vencer (7 dias)</div>
@@ -534,13 +563,15 @@ function renderStats() {
   // Payment bars
   const methods = ['yape', 'plin', 'transferencia', 'efectivo', ''];
   const colors = ['#f59e0b', '#3b82f6', '#10b981', '#6b7280', '#ef4444'];
+  const gradients = ['linear-gradient(180deg, #fbbf24, #f59e0b)', 'linear-gradient(180deg, #60a5fa, #3b82f6)', 'linear-gradient(180deg, #34d399, #10b981)', 'linear-gradient(180deg, #9ca3af, #6b7280)', 'linear-gradient(180deg, #f87171, #ef4444)'];
   const labels = ['Yape', 'Plin', 'Transf.', 'Efectivo', 'Sin pago'];
   const maxCount = Math.max(1, ...methods.map(m => allClients.filter(c => (c.payment_method || '') === m).length));
   document.getElementById('paymentBars').innerHTML = methods.map((m, i) => {
     const count = allClients.filter(c => (c.payment_method || '') === m).length;
-    const h = Math.max(4, (count / maxCount) * 70);
-    return `<div style="text-align:center;"><div class="bar" style="height:${h}px;background:${colors[i]};"></div><div class="bar-label">${labels[i]}<br>${count}</div></div>`;
+    const h = Math.max(6, (count / maxCount) * 100);
+    return `<div class="bar-wrap"><div class="bar-value">${count}</div><div class="bar" style="height:0;background:${gradients[i]};" data-height="${h}"></div><div class="bar-label">${labels[i]}</div></div>`;
   }).join('');
+  setTimeout(() => document.querySelectorAll('#paymentBars .bar').forEach(b => b.style.height = b.dataset.height + 'px'), 100);
 
   // Month bars
   const months = [];
@@ -553,9 +584,10 @@ function renderStats() {
   }
   const maxMonth = Math.max(1, ...months);
   document.getElementById('monthBars').innerHTML = months.map((count, i) => {
-    const h = Math.max(4, (count / maxMonth) * 70);
-    return `<div style="text-align:center;"><div class="bar" style="height:${h}px;background:#7c3aed;"></div><div class="bar-label">${monthLabels[i]}<br>${count}</div></div>`;
+    const h = Math.max(6, (count / maxMonth) * 100);
+    return `<div class="bar-wrap"><div class="bar-value">${count}</div><div class="bar" style="height:0;background:linear-gradient(180deg, #a855f7, #7c3aed);" data-height="${h}"></div><div class="bar-label">${monthLabels[i]}</div></div>`;
   }).join('');
+  setTimeout(() => document.querySelectorAll('#monthBars .bar').forEach(b => b.style.height = b.dataset.height + 'px'), 200);
 }
 
 // ── RENDER CLIENTS ──
