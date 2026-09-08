@@ -401,7 +401,10 @@ async function validarLogin() {
     }));
 
     // Registrar último acceso
-    supabase.from('clients').update({ last_seen: new Date().toISOString() }).eq('id', data.id).then();
+    supabase.from('clients').update({ last_seen: new Date().toISOString() }).eq('id', data.id).then(r => {
+      if (r.error) console.error('last_seen update error:', r.error);
+      else console.log('last_seen updated OK');
+    });
 
     cerrarLogin();
     showToast('success', 'Bienvenido ' + data.name + '!');
