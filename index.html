@@ -217,151 +217,27 @@
 <!-- PRODUCTOS -->
 <div class="section-title" id="productos">
   <h3>Nuestros <span>Productos</span></h3>
-  <p>Haz clic en cualquier producto para acceder con tus credenciales</p>
-</div>
-
-<div class="filter-bar">
-  <button class="filter-btn active" onclick="filterProducts('todos', this)">Todos</button>
-  <button class="filter-btn" onclick="filterProducts('excel', this)">Excel</button>
-  <button class="filter-btn" onclick="filterProducts('cursos', this)">Cursos</button>
-  <button class="filter-btn" onclick="filterProducts('pdf', this)">PDFs</button>
-  <button class="filter-btn" onclick="filterProducts('herramientas', this)">Herramientas</button>
+  <p>Haz clic en el producto para acceder con tus credenciales</p>
 </div>
 
 <div class="grid" id="productGrid">
 
-  <!-- 1 - PLANTILLAS -->
-  <div class="card" data-cat="excel" data-product="plantillas" onclick="abrirLogin('plantillas', 'Pack Plantillas Excel')">
-    <div class="card-img">
-      <span class="card-category">Excel</span>
-      <span class="card-badge badge-bestseller">Best Seller</span>
-      <span style="font-size:56px">📊</span>
-    </div>
-    <div class="card-body">
-      <h4>Pack Plantillas Excel Completo</h4>
-      <p>+3,468 plantillas profesionales para 102 rubros peruanos. Dashboards, inventarios, ventas, contabilidad y mas. Acceso de por vida.</p>
-      <div class="card-footer">
-        <div class="price">S/49 <small>S/199</small></div>
-        <button class="btn-acceder"><span>Acceder</span></button>
+  <!-- PLANTILLAS -->
+  <div class="card" data-cat="excel" data-product="plantillas" onclick="abrirLogin('plantillas', 'Pack Plantillas Excel', '+3,468 plantillas profesionales para 102 rubros peruanos. Incluye dashboards, control de ventas, inventarios, flujo de caja, presupuestos, calculadoras laborales (CTS, gratificaciones, AFP/ONP), control tributario SUNAT, y mucho mas. Todo en español, con formulas y graficos listos para usar. Acceso de por vida, descarga ilimitada.', 'S/49')">
+      <div class="card-img">
+        <span class="card-category">Excel</span>
+        <span class="card-badge badge-bestseller">Best Seller</span>
+        <span style="font-size:56px">📊</span>
+      </div>
+      <div class="card-body">
+        <h4>Pack Plantillas Excel Completo</h4>
+        <p>+3,468 plantillas profesionales para 102 rubros peruanos. Dashboards, inventarios, ventas, contabilidad y mas. Acceso de por vida.</p>
+        <div class="card-footer">
+          <div class="price">S/49 <small>S/199</small></div>
+          <button class="btn-acceder"><span>Acceder</span></button>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- 2 - CURSO WHATSAPP -->
-  <div class="card" data-cat="cursos" data-product="curso-whatsapp" onclick="abrirLogin('curso-whatsapp', 'Curso Ventas por WhatsApp')">
-    <div class="card-img">
-      <span class="card-category">Curso</span>
-      <span class="card-badge badge-popular">Popular</span>
-      <span style="font-size:56px">📱</span>
-    </div>
-    <div class="card-body">
-      <h4>Curso Ventas por WhatsApp</h4>
-      <p>5 modulos + 2 bonos. Scripts, automatizacion, funnel y estrategias para cerrar mas ventas.</p>
-      <div class="card-footer">
-        <div class="price">S/29</div>
-        <button class="btn-acceder"><span>Acceder</span></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3 - MELAMINA -->
-  <div class="card" data-cat="pdf" data-product="melamina" onclick="abrirLogin('melamina', 'Planos Muebles Melamina')">
-    <div class="card-img">
-      <span class="card-category">PDF + Excel</span>
-      <span class="card-badge badge-nuevo">Nuevo</span>
-      <span style="font-size:56px">🪑</span>
-    </div>
-    <div class="card-body">
-      <h4>Planos Muebles Melamina</h4>
-      <p>20 planos detallados + calculadora Excel de materiales. Guia de proveedores incluida.</p>
-      <div class="card-footer">
-        <div class="price">S/39</div>
-        <button class="btn-acceder"><span>Acceder</span></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4 - MARKETING -->
-  <div class="card" data-cat="cursos" data-product="marketing" onclick="abrirLogin('marketing', 'Pack Marketing Digital')">
-    <div class="card-img">
-      <span class="card-category">Curso</span>
-      <span style="font-size:56px">🚀</span>
-    </div>
-    <div class="card-body">
-      <h4>Pack Marketing Digital</h4>
-      <p>Templates para redes, calendario de contenido, scripts de venta y guia de Facebook Ads.</p>
-      <div class="card-footer">
-        <div class="price">S/35</div>
-        <button class="btn-acceder"><span>Acceder</span></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5 - CALCULADORAS -->
-  <div class="card" data-cat="herramientas" data-product="calculadoras" onclick="abrirLogin('calculadoras', 'Calculadoras Financieras Pack')">
-    <div class="card-img">
-      <span class="card-category">Herramienta</span>
-      <span class="card-badge badge-exclusivo">Exclusivo</span>
-      <span style="font-size:56px">🧮</span>
-    </div>
-    <div class="card-body">
-      <h4>Calculadoras Financieras Pack</h4>
-      <p>CTS, gratificaciones, AFP/ONP, vacaciones, ROI, IPC. Todo calculado automaticamente.</p>
-      <div class="card-footer">
-        <div class="price">S/19</div>
-        <button class="btn-acceder"><span>Acceder</span></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 6 - DASHBOARD -->
-  <div class="card" data-cat="excel" data-product="dashboard" onclick="abrirLogin('dashboard', 'Dashboard Financiero Pro')">
-    <div class="card-img">
-      <span class="card-category">Excel</span>
-      <span style="font-size:56px">📈</span>
-    </div>
-    <div class="card-body">
-      <h4>Dashboard Financiero Pro</h4>
-      <p>Panel de control financiero con KPIs, graficos automaticos y estados financieros.</p>
-      <div class="card-footer">
-        <div class="price">S/15</div>
-        <button class="btn-acceder"><span>Acceder</span></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 7 - CURSO EXCEL -->
-  <div class="card" data-cat="cursos" data-product="curso-excel" onclick="abrirLogin('curso-excel', 'Curso Excel para Negocios')">
-    <div class="card-img">
-      <span class="card-category">Curso</span>
-      <span class="card-badge badge-nuevo">Nuevo</span>
-      <span style="font-size:56px">🎓</span>
-    </div>
-    <div class="card-body">
-      <h4>Curso Excel para Negocios</h4>
-      <p>Aprende Excel desde cero aplicado a negocios. Formulas, dashboards, macros basicas.</p>
-      <div class="card-footer">
-        <div class="price">S/29</div>
-        <button class="btn-acceder"><span>Acceder</span></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 8 - REDES SOCIALES -->
-  <div class="card" data-cat="herramientas" data-product="redes-sociales" onclick="abrirLogin('redes-sociales', 'Pack Redes Sociales Templates')">
-    <div class="card-img">
-      <span class="card-category">Herramienta</span>
-      <span style="font-size:56px">🎨</span>
-    </div>
-    <div class="card-body">
-      <h4>Pack Redes Sociales Templates</h4>
-      <p>50 templates editables para Instagram, Facebook y WhatsApp. Listos para publicar.</p>
-      <div class="card-footer">
-        <div class="price">S/25</div>
-        <button class="btn-acceder"><span>Acceder</span></button>
-      </div>
-    </div>
-  </div>
 
 </div>
 
@@ -370,14 +246,19 @@
   <div class="modal">
     <button class="modal-close" onclick="cerrarLogin()">&times;</button>
     <div class="modal-icon">🔐</div>
-    <h3>Acceder al producto</h3>
+    <h3 id="modal-titulo">Acceder al producto</h3>
     <p class="subtitle" id="modal-producto"></p>
-    <label>Usuario (WhatsApp)</label>
+    <div id="modal-desc-box" style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.15);border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:#c4b5fd;line-height:1.6;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <label style="margin:0">Usuario (WhatsApp)</label>
+      <span id="modal-precio" style="font-size:20px;font-weight:800;color:#a855f7;"></span>
+    </div>
     <input type="text" id="input-user" placeholder="Ej: 921109080">
     <label>Clave de acceso</label>
     <input type="password" id="input-pass" placeholder="Tu clave">
     <button class="btn-login" id="btn-login" onclick="validarLogin()">Ingresar</button>
     <p class="error-msg" id="error-msg"></p>
+    <p style="text-align:center;margin-top:14px;font-size:12px;color:#6b7280;">¿No tienes acceso? <a href="https://wa.me/51921109080" target="_blank" style="color:#a855f7;text-decoration:none;font-weight:600;">Escribenos por WhatsApp</a></p>
   </div>
 </div>
 
@@ -401,14 +282,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 // Mapa de producto slug → página
 const PRODUCT_PAGES = {
-  'plantillas': 'plantillas.html',
-  'curso-whatsapp': null,   // futuro
-  'melamina': null,          // futuro
-  'marketing': null,         // futuro
-  'calculadoras': null,      // futuro
-  'dashboard': null,         // futuro
-  'curso-excel': null,       // futuro
-  'redes-sociales': null     // futuro
+  'plantillas': 'plantillas.html'
 };
 
 let productoActualSlug = '';
@@ -453,10 +327,13 @@ function filterProducts(cat, btn) {
 }
 
 // === LOGIN ===
-function abrirLogin(slug, nombre) {
+function abrirLogin(slug, nombre, desc, precio) {
   productoActualSlug = slug;
   productoActualNombre = nombre;
-  document.getElementById('modal-producto').textContent = nombre;
+  document.getElementById('modal-titulo').textContent = nombre;
+  document.getElementById('modal-producto').textContent = '';
+  document.getElementById('modal-desc-box').textContent = desc || '';
+  document.getElementById('modal-precio').textContent = precio || '';
   document.getElementById('modal-overlay').classList.add('active');
   document.getElementById('input-user').value = '';
   document.getElementById('input-pass').value = '';
