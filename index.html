@@ -401,10 +401,12 @@ async function validarLogin() {
     }));
 
     // Registrar último acceso
-    supabase.from('clients').update({ last_seen: new Date().toISOString() }).eq('id', data.id).then(r => {
-      if (r.error) console.error('last_seen update error:', r.error);
-      else console.log('last_seen updated OK');
-    });
+    try {
+      const now = new Date().toISOString();
+      const { error: updErr } = await supabase.from('clients').update({ last_seen: now }).eq('id', data.id);
+      if (updErr) console.error('last_seen error:', updErr);
+      else console.log('last_seen updated OK:', now);
+    } catch (lsErr) { console.error('last_seen catch:', lsErr); }
 
     cerrarLogin();
     showToast('success', 'Bienvenido ' + data.name + '!');

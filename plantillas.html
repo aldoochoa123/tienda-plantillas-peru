@@ -31888,10 +31888,12 @@ async function checkGate() {
   errorEl.style.display = 'none';
 
   // Registrar último acceso
-  supabase.from('clients').update({ last_seen: new Date().toISOString() }).eq('phone', data[0].phone).then(r => {
-    if (r.error) console.error('last_seen error:', r.error);
-    else console.log('last_seen updated OK for', data[0].phone);
-  }).catch(e => console.error('last_seen catch:', e));
+  try {
+    const now = new Date().toISOString();
+    const { error: updErr } = await supabase.from('clients').update({ last_seen: now }).eq('phone', data[0].phone);
+    if (updErr) console.error('last_seen error:', updErr);
+    else console.log('last_seen updated OK:', now);
+  } catch (lsErr) { console.error('last_seen catch:', lsErr); }
 
   } catch (e) {
     btn.textContent = 'Entrar';
