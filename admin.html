@@ -51,10 +51,10 @@
   
   .client-list { list-style: none; }
   .client-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 0; border-bottom: 1px solid #f3f4f6;
+    padding: 16px 0; border-bottom: 1px solid #f3f4f6;
   }
   .client-item:last-child { border-bottom: none; }
+  .client-top { display: flex; align-items: center; justify-content: space-between; }
   .client-name { font-weight: 600; font-size: 0.95rem; }
   .client-pass { 
     font-family: monospace; font-size: 0.85rem; background: #f3f4f6;
@@ -73,6 +73,15 @@
   .btn-wa:hover { background: #d4c4ff; }
   .btn-delete { background: #fee2e2; color: #dc2626; }
   .btn-delete:hover { background: #fecaca; }
+  .btn-edit { background: #e0e7ff; color: #4338ca; }
+  .btn-edit:hover { background: #c7d2fe; }
+  
+  .product-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .product-tag {
+    font-size: 0.7rem; font-weight: 600; padding: 3px 8px; border-radius: 12px;
+    background: #ede5ff; color: #5b21b6;
+  }
+  .product-tag.all { background: #fef3c7; color: #92400e; }
   
   .empty { text-align: center; padding: 40px 20px; color: #9ca3af; }
   .empty .emoji { font-size: 2.5rem; margin-bottom: 8px; }
@@ -118,6 +127,37 @@
   }
   .admin-gate-box button:hover { background: #3510d8; }
   .admin-gate-error { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; }
+
+  /* Product selector */
+  .product-selector { margin: 12px 0; }
+  .product-selector label { font-size: 0.85rem; font-weight: 600; color: #374151; display: block; margin-bottom: 8px; }
+  .product-checks { display: flex; flex-wrap: wrap; gap: 6px; }
+  .product-check {
+    display: flex; align-items: center; gap: 4px;
+    background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 6px 10px; cursor: pointer; transition: 0.2s; font-size: 0.8rem;
+  }
+  .product-check:hover { border-color: #4318FF; }
+  .product-check.selected { background: #ede5ff; border-color: #7c3aed; color: #5b21b6; }
+  .product-check input { display: none; }
+
+  /* Edit modal */
+  .edit-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; align-items: center; justify-content: center; }
+  .edit-overlay.active { display: flex; }
+  .edit-modal { background: white; border-radius: 16px; padding: 28px; width: 420px; max-width: 92vw; animation: modalIn 0.3s ease; }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+  .edit-modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+  .edit-modal .btn-save {
+    width: 100%; padding: 12px; border: none; border-radius: 10px;
+    background: #4318FF; color: white; font-weight: 700; font-size: 0.95rem;
+    cursor: pointer; margin-top: 16px;
+  }
+  .edit-modal .btn-save:hover { background: #3510d8; }
+  .edit-modal .btn-cancel {
+    width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 10px;
+    background: white; color: #6b7280; font-weight: 600; font-size: 0.85rem;
+    cursor: pointer; margin-top: 8px;
+  }
 </style>
 </head>
 <body>
@@ -133,7 +173,8 @@
   </div>
 </div>
 
-<div class="admin-header">    <h1><img src="logo.jpg" alt="Logo" style="width: 36px; height: 36px; object-fit: contain; vertical-align: middle; margin-right: 8px; border-radius: 6px;">Panel de Administración</h1>
+<div class="admin-header">
+  <h1><img src="logo.jpg" alt="Logo" style="width: 36px; height: 36px; object-fit: contain; vertical-align: middle; margin-right: 8px; border-radius: 6px;">Panel de Administración</h1>
   <p>Gestiona los accesos de tus clientes</p>
 </div>
 
@@ -157,7 +198,13 @@
     <div class="form-row">
       <input type="text" id="clientPhone" placeholder="Número WhatsApp (ej: 999888777)">
       <input type="text" id="clientName" placeholder="Nombre (opcional)">
-      <button onclick="addClient()">Agregar</button>
+    </div>
+    <div class="product-selector">
+      <label>Productos a los que tendrá acceso:</label>
+      <div class="product-checks" id="productChecksAdd"></div>
+    </div>
+    <div class="form-row">
+      <button onclick="addClient()" style="width:100%">Agregar Cliente</button>
     </div>
     <div class="password-msg">
       💡 <strong>Usuario:</strong> El número de WhatsApp del cliente<br>
@@ -180,12 +227,25 @@
     <h2>📋 Cómo usar</h2>
     <ol style="font-size: 0.9rem; line-height: 1.8; padding-left: 20px; color: #374151;">
       <li>Cliente te escribe por <strong>WhatsApp</strong></li>
-      <li>Tú vendes el pack</li>
-      <li>Haz clic en <strong>"Agregar"</strong> con su nombre</li>
+      <li>Tú vendes el producto</li>
+      <li>Agregas al cliente y <strong>seleccionas los productos</strong> que compró</li>
       <li>Haz clic en <strong>"WhatsApp"</strong> para enviarle sus datos</li>
-      <li>El cliente entra a tu web → escribe <strong>usuario</strong> y <strong>contraseña</strong></li>
-      <li>¡Listo! Puede descargar lo que quiera, cuantas veces quiera</li>
+      <li>El cliente entra a tu web → hace click en su producto → escribe <strong>usuario</strong> y <strong>contraseña</strong></li>
+      <li>¡Listo! Puede acceder a sus productos</li>
     </ol>
+  </div>
+</div>
+
+<!-- EDIT PRODUCTS MODAL -->
+<div class="edit-overlay" id="editOverlay">
+  <div class="edit-modal">
+    <h3>Editar productos de <span id="editClientName"></span></h3>
+    <div class="product-selector">
+      <label>Productos asignados:</label>
+      <div class="product-checks" id="productChecksEdit"></div>
+    </div>
+    <button class="btn-save" onclick="saveProducts()">Guardar cambios</button>
+    <button class="btn-cancel" onclick="closeEdit()">Cancelar</button>
   </div>
 </div>
 
@@ -223,8 +283,45 @@
   const SUPABASE_URL = 'https://emwmyfhjdjyknxfsdnyg.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtd215ZmhqZGp5a254ZnNkbnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzc5NTgsImV4cCI6MjEwMzYxMzk1OH0.gn902cjDSjXGLzB7_bR0l519obVEFvUFBRZpRBq81CM';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-  console.log('Supabase URL:', SUPABASE_URL);
-  console.log('Supabase client:', supabase);
+
+  // ── Products ──
+  const PRODUCTS = [
+    { slug: 'plantillas', name: 'Plantillas Excel', icon: '📊' },
+    { slug: 'curso-whatsapp', name: 'Curso WhatsApp', icon: '📱' },
+    { slug: 'melamina', name: 'Planos Melamina', icon: '🪑' },
+    { slug: 'marketing', name: 'Marketing Digital', icon: '🚀' },
+    { slug: 'calculadoras', name: 'Calculadoras', icon: '🧮' },
+    { slug: 'dashboard', name: 'Dashboard Financiero', icon: '📈' },
+    { slug: 'curso-excel', name: 'Curso Excel', icon: '🎓' },
+    { slug: 'redes-sociales', name: 'Redes Sociales', icon: '🎨' }
+  ];
+
+  let editClientId = null;
+  let selectedAdd = [];
+  let selectedEdit = [];
+
+  function renderProductChecks(containerId, selected, onChange) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = PRODUCTS.map(p => {
+      const isChecked = selected.includes(p.slug);
+      return `<div class="product-check ${isChecked ? 'selected' : ''}" data-slug="${p.slug}" onclick="toggleProduct(this, '${containerId}')">
+        <span>${p.icon}</span>
+        <span>${p.name}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleProduct(el, containerId) {
+    const slug = el.dataset.slug;
+    el.classList.toggle('selected');
+  }
+
+  function getSelectedProducts(containerId) {
+    return Array.from(document.querySelectorAll(`#${containerId} .product-check.selected`)).map(el => el.dataset.slug);
+  }
+
+  // Init product checks for add form
+  renderProductChecks('productChecksAdd', []);
 
   function generatePassword(phone) {
     const clean = phone.replace(/[^0-9]/g, '').slice(-6);
@@ -240,14 +337,12 @@
 
       if (error) {
         showToast('❌ Error cargando: ' + error.message);
-        console.error('Load error:', error);
         return;
       }
       allClients = data || [];
       renderClients();
     } catch (e) {
       showToast('❌ Error conexión: ' + e.message);
-      console.error('Load catch:', e);
     }
   }
 
@@ -257,6 +352,7 @@
       const nameInput = document.getElementById('clientName');
       const phone = phoneInput.value.trim().replace(/[^0-9]/g, '');
       const name = nameInput.value.trim() || phone;
+      const products = getSelectedProducts('productChecksAdd');
 
       if (!phone || phone.length < 6) {
         phoneInput.focus();
@@ -264,9 +360,13 @@
         return;
       }
 
+      if (products.length === 0) {
+        showToast('⚠️ Selecciona al menos un producto');
+        return;
+      }
+
       const password = generatePassword(phone);
 
-      // Verificar que no exista
       if (allClients.find(c => c.phone === phone)) {
         showToast('⚠️ Ya existe un cliente con ese número');
         return;
@@ -276,23 +376,23 @@
 
       const { data, error } = await supabase
         .from('clients')
-        .insert({ phone, name, password, active: true })
+        .insert({ phone, name, password, active: true, products })
         .select();
 
       if (error) {
         showToast('❌ Error: ' + error.message);
-        console.error('Supabase error:', error);
         return;
       }
 
       phoneInput.value = '';
       nameInput.value = '';
+      selectedAdd = [];
+      renderProductChecks('productChecksAdd', []);
       phoneInput.focus();
       showToast('✅ Cliente "' + name + '" agregado');
       await loadClients();
     } catch (e) {
       showToast('❌ Error: ' + e.message);
-      console.error('Error general:', e);
     }
   }
 
@@ -307,11 +407,44 @@
 
     if (error) {
       showToast('❌ Error eliminando cliente');
-      console.error(error);
       return;
     }
 
     showToast('🗑️ Cliente eliminado');
+    await loadClients();
+  }
+
+  function openEdit(id) {
+    const client = allClients.find(c => c.id === id);
+    if (!client) return;
+    editClientId = id;
+    selectedEdit = client.products || [];
+    document.getElementById('editClientName').textContent = client.name;
+    renderProductChecks('productChecksEdit', selectedEdit);
+    document.getElementById('editOverlay').classList.add('active');
+  }
+
+  function closeEdit() {
+    document.getElementById('editOverlay').classList.remove('active');
+    editClientId = null;
+  }
+
+  async function saveProducts() {
+    if (!editClientId) return;
+    const products = getSelectedProducts('productChecksEdit');
+
+    const { error } = await supabase
+      .from('clients')
+      .update({ products })
+      .eq('id', editClientId);
+
+    if (error) {
+      showToast('❌ Error: ' + error.message);
+      return;
+    }
+
+    showToast('✅ Productos actualizados');
+    closeEdit();
     await loadClients();
   }
 
@@ -321,14 +454,20 @@
     });
   }
 
-  function sendWhatsApp(name, phone, password) {
+  function sendWhatsApp(name, phone, password, products) {
+    const productNames = (products || []).map(slug => {
+      const p = PRODUCTS.find(pr => pr.slug === slug);
+      return p ? p.icon + ' ' + p.name : slug;
+    }).join('\n');
+
     const msg = encodeURIComponent(
       'Hola ' + name + ' 👋\n\n' +
-      'Ya tienes acceso a las Plantillas Excel Perú 📦\n\n' +
+      'Ya tienes acceso a nuestros productos digitales 📦\n\n' +
       '👤 Usuario: *' + phone + '*\n' +
       '🔐 Contraseña: *' + password + '*\n\n' +
+      '📦 Tus productos:\n' + productNames + '\n\n' +
       'Ingresa a: https://tienda-plantillas-peru.vercel.app\n\n' +
-      'Si tienes dudas, escríbeme 😊'
+      'Haz click en tu producto, ingresa tus datos y accede. Si tienes dudas, escribeme 😊'
     );
     window.open('https://wa.me/?text=' + msg, '_blank');
     showToast('📱 Mensaje abierto para enviar por WhatsApp');
@@ -344,20 +483,33 @@
       return;
     }
 
-    list.innerHTML = allClients.map(c => `
+    list.innerHTML = allClients.map(c => {
+      const prods = c.products || [];
+      const tags = prods.length === 0
+        ? '<span class="product-tag" style="background:#fee2e2;color:#dc2626;">Sin productos</span>'
+        : prods.map(slug => {
+            const p = PRODUCTS.find(pr => pr.slug === slug);
+            return p ? `<span class="product-tag">${p.icon} ${p.name}</span>` : '';
+          }).join('');
+
+      return `
       <li class="client-item">
-        <div>
-          <div class="client-name">${c.name}</div>
-          <div style="font-size: 0.8rem; color: #6b7280;">📱 ${c.phone}</div>
-          <span class="client-pass" onclick="copyPassword('${c.password}')" title="Clic para copiar">🔑 ${c.password}</span>
+        <div class="client-top">
+          <div>
+            <div class="client-name">${c.name}</div>
+            <div style="font-size: 0.8rem; color: #6b7280;">📱 ${c.phone}</div>
+            <span class="client-pass" onclick="copyPassword('${c.password}')" title="Clic para copiar">🔑 ${c.password}</span>
+            <div class="product-tags">${tags}</div>
+          </div>
+          <div class="client-actions">
+            <button class="btn-sm btn-edit" onclick="openEdit(${c.id})">✏️ Productos</button>
+            <button class="btn-sm btn-copy" onclick="copyPassword('${c.password}')">📋</button>
+            <button class="btn-sm btn-wa" onclick="sendWhatsApp('${c.name.replace(/'/g, "\\'")}', '${c.phone}', '${c.password}', ${JSON.stringify(prods)})">💬</button>
+            <button class="btn-sm btn-delete" onclick="deleteClient(${c.id})">🗑️</button>
+          </div>
         </div>
-        <div class="client-actions">
-          <button class="btn-sm btn-copy" onclick="copyPassword('${c.password}')">📋 Copiar</button>
-          <button class="btn-sm btn-wa" onclick="sendWhatsApp('${c.name.replace(/'/g, "\\'")}', '${c.phone}', '${c.password}')">💬 WhatsApp</button>
-          <button class="btn-sm btn-delete" onclick="deleteClient(${c.id})">🗑️</button>
-        </div>
-      </li>
-    `).join('');
+      </li>`;
+    }).join('');
   }
 
   function showToast(msg) {
@@ -367,12 +519,14 @@
     setTimeout(() => toast.classList.remove('show'), 2500);
   }
 
-  // Enter para agregar
   document.getElementById('clientName').addEventListener('keydown', e => {
     if (e.key === 'Enter') addClient();
   });
 
-  // Cargar clientes desde Supabase
+  document.getElementById('editOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeEdit();
+  });
+
   loadClients();
 </script>
 </body>
