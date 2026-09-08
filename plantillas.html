@@ -31887,6 +31887,9 @@ async function checkGate() {
   document.getElementById('gateOverlay').classList.add('hidden');
   errorEl.style.display = 'none';
 
+  // Registrar último acceso
+  supabase.from('clients').update({ last_seen: new Date().toISOString() }).eq('phone', data[0].phone).then();
+
   } catch (e) {
     btn.textContent = 'Entrar';
     btn.disabled = false;
